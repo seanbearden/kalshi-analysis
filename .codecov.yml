@@ -1,0 +1,118 @@
+# Codecov Configuration for Kalshi Market Insights
+# Enhanced PR comments with visualization and targeted patch coverage
+
+# Coverage targets and thresholds
+coverage:
+  status:
+    project:
+      default:
+        target: 70%
+        threshold: 1%
+    patch:
+      default:
+        target: 80%
+        threshold: 5%
+
+# Pull Request Comment Configuration
+comment:
+  # Enhanced layout with 2025 features
+  layout: "newheader, diff, flags, components, files, newfooter"
+
+  # Only comment when coverage changes to reduce noise
+  require_changes: true
+
+  # Collapse additional details for cleaner view
+  hide_comment_details: true
+
+  # Wait for both backend and frontend reports
+  after_n_builds: 2
+
+  # Don't require base/head - useful for first PRs
+  require_base: false
+  require_head: true
+
+# Flags for separating backend/frontend coverage
+flags:
+  backend:
+    paths:
+      - backend/
+    carryforward: true
+
+  frontend:
+    paths:
+      - frontend/
+    carryforward: true
+
+# Component tracking for critical areas
+component_management:
+  individual_components:
+    # Phase 2: WebSocket Infrastructure (High Priority)
+    - component_id: "websocket_infra"
+      name: "WebSocket Infrastructure"
+      paths:
+        - backend/infrastructure/kalshi/websocket_client.py
+        - backend/infrastructure/polling/gap_filler.py
+
+    # API Layer
+    - component_id: "api"
+      name: "API Layer"
+      paths:
+        - backend/api/**
+
+    # Domain Logic (Business Rules)
+    - component_id: "domain"
+      name: "Domain Logic"
+      paths:
+        - backend/domain/**
+
+    # Kalshi Integration
+    - component_id: "kalshi_integration"
+      name: "Kalshi Integration"
+      paths:
+        - backend/infrastructure/kalshi/**
+
+    # Data Access Layer
+    - component_id: "repositories"
+      name: "Repositories"
+      paths:
+        - backend/domain/repositories/**
+
+    # Frontend Components
+    - component_id: "ui_components"
+      name: "UI Components"
+      paths:
+        - frontend/src/components/**
+
+# Patch-specific configuration for critical files
+github_checks:
+  annotations: true
+
+# Ignore patterns
+ignore:
+  - "**/__pycache__/**"
+  - "**/node_modules/**"
+  - "**/.venv/**"
+  - "**/venv/**"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/.pytest_cache/**"
+  - "**/htmlcov/**"
+  - "**/*.md"
+  - "docs/**"
+  - "claudedocs/**"
+
+# Parse coverage reports
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no
+
+# Notification settings (optional)
+slack:
+  enabled: false
+
+github_checks:
+  annotations: true

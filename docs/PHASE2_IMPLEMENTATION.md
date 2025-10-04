@@ -441,6 +441,44 @@ INFO  - Filled 2/3 gaps for TICKER
 
 ---
 
+## Code Coverage Enhancement
+
+### Enhanced Codecov Configuration
+
+Added comprehensive `.codecov.yml` with 2025 features for actionable PR feedback:
+
+**Key Features**:
+- ✅ **Enhanced PR Comments** - Modern layout with `newheader`/`newfooter` and collapsible details
+- ✅ **Component Tracking** - Dedicated tracking for WebSocket infrastructure:
+  - `backend/infrastructure/kalshi/websocket_client.py`
+  - `backend/infrastructure/polling/gap_filler.py`
+- ✅ **Patch Coverage Focus** - 80% target for new code (enforces quality)
+- ✅ **Flag Separation** - Separate backend/frontend coverage reporting
+- ✅ **Visualization** - Sunburst graph and diff visualization in PR comments
+- ✅ **Noise Reduction** - `require_changes: true` (only comments on coverage changes)
+
+**Component Breakdown**:
+```yaml
+- websocket_infra: WebSocket Infrastructure (websocket_client.py, gap_filler.py)
+- api: API Layer (api/**)
+- domain: Domain Logic (domain/**)
+- kalshi_integration: Kalshi Integration (infrastructure/kalshi/**)
+- repositories: Data Access (domain/repositories/**)
+- ui_components: Frontend Components (frontend/src/components/**)
+```
+
+**Coverage Targets**:
+- Project Coverage: 70% (±1% threshold)
+- Patch Coverage: 80% (±5% threshold)
+
+**Benefits**:
+- Immediate feedback on PR coverage impact
+- Component-level visibility for critical modules
+- Reduced comment noise with conditional posting
+- Visual graphs for quick coverage assessment
+
+---
+
 ## Conclusion
 
 Phase 2 implementation is **complete and ready for validation**. The WebSocket infrastructure is in place, gap detection is functional, and the system can now collect real-time market data alongside REST polling.
