@@ -1,5 +1,7 @@
 import { useBacktests } from '../hooks/useBacktests'
 import { format } from 'date-fns'
+import { motion } from 'framer-motion'
+import { BacktestCardSkeleton } from '../components/ui/Skeleton'
 
 export default function BacktestsPage() {
   const { data, isLoading, error } = useBacktests()
@@ -7,10 +9,17 @@ export default function BacktestsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-          <p className="mt-4 text-muted-foreground">Loading backtests...</p>
+      <div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Backtests</h1>
+          <p className="mt-2 text-muted-foreground">
+            Strategy backtesting results and performance metrics
+          </p>
+        </div>
+        <div className="grid gap-4">
+          {[...Array(3)].map((_, i) => (
+            <BacktestCardSkeleton key={i} />
+          ))}
         </div>
       </div>
     )
@@ -58,7 +67,7 @@ export default function BacktestsPage() {
   }
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Backtests</h1>
         <p className="mt-2 text-muted-foreground">
@@ -67,8 +76,15 @@ export default function BacktestsPage() {
       </div>
 
       <div className="grid gap-4">
-        {backtests.map((backtest) => (
-          <div key={backtest.id} className="rounded-lg border bg-card p-6">
+        {backtests.map((backtest, index) => (
+          <motion.div
+            key={backtest.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1, duration: 0.3 }}
+            whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+            className="rounded-lg border bg-card p-6 shadow-sm hover:shadow-md transition-shadow"
+          >
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-semibold">{backtest.strategy.replace('_', ' ')}</h3>
@@ -113,9 +129,9 @@ export default function BacktestsPage() {
                 <p className="mt-1 text-lg font-semibold">{backtest.total_trades || '-'}</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
