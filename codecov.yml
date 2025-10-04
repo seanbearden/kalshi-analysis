@@ -1,6 +1,10 @@
 # Codecov Configuration
 # https://docs.codecov.com/docs/codecov-yaml
 
+codecov:
+  branch: main
+  max_report_age: '12h'
+
 coverage:
   precision: 2
   round: down
@@ -18,9 +22,24 @@ coverage:
         target: 80%
         threshold: 2%
 
+      # WebSocket Infrastructure - Phase 2 Critical Files
+      websocket_infra:
+        target: 80%
+        threshold: 5%
+        paths:
+          - backend/infrastructure/kalshi/websocket_client.py
+          - backend/infrastructure/polling/gap_filler.py
+
 # Component configuration for monorepo
 component_management:
   individual_components:
+    # Phase 2: WebSocket Infrastructure (High Priority)
+    - component_id: websocket_infra
+      name: WebSocket Infrastructure
+      paths:
+        - backend/infrastructure/kalshi/websocket_client.py
+        - backend/infrastructure/polling/gap_filler.py
+
     - component_id: backend
       name: Backend API
       paths:
@@ -45,7 +64,7 @@ flags:
 
 # Comment configuration
 comment:
-  layout: "reach,diff,flags,tree,components"
+  layout: 'reach,diff,flags,tree,sunburst,components'
   behavior: default
   require_changes: false
   require_base: false

@@ -1,5 +1,6 @@
 """Markets API endpoints."""
 
+from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query
@@ -116,3 +117,35 @@ async def get_snapshot_by_id(id: UUID, session: SessionDep) -> MarketSnapshotRes
         raise HTTPException(status_code=404, detail=f"Snapshot {id} not found")
 
     return MarketSnapshotResponse.model_validate(snapshot)
+
+
+@router.get("/{ticker}/gaps")
+async def get_sequence_gaps(ticker: str, session: SessionDep) -> dict[str, Any]:
+    """Get WebSocket sequence gaps for a ticker.
+
+    Phase 2 feature: Monitor data integrity by detecting missing sequences.
+
+    Args:
+        ticker: Market ticker
+        session: Database session
+
+    Returns:
+        Dict with gap information
+
+    Example response:
+        {
+            "ticker": "INXD-24FEB16-T4125",
+            "gaps": [3, 6, 12],
+            "gap_count": 3,
+            "has_gaps": true
+        }
+    """
+    repo = MarketRepository(session)
+    gaps = await repo.detect_gaps(ticker)
+
+    return {
+        "ticker": ticker,
+        "gaps": gaps,
+        "gap_count": len(gaps),
+        "has_gaps": len(gaps) > 0,
+    }

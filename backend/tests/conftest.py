@@ -40,9 +40,12 @@ def test_db_url() -> str:
     return "sqlite+aiosqlite:///:memory:"
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 async def test_engine(test_db_url: str) -> AsyncGenerator[AsyncEngine, None]:
-    """Create test database engine."""
+    """Create test database engine.
+
+    Function-scoped to ensure test isolation - each test gets a fresh database.
+    """
     engine = create_async_engine(test_db_url, echo=False)
 
     # Create all tables
