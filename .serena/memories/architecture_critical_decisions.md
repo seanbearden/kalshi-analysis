@@ -32,7 +32,7 @@ services:
   poller:   # Singleton - always 1 instance
     build: ./backend
     command: python -m infrastructure.polling.poller
-  
+
   api:      # Scales horizontally - N instances
     build: ./backend
     command: uvicorn api.main:app

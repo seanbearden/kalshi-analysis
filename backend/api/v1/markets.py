@@ -1,14 +1,14 @@
 """Markets API endpoints."""
 
-from fastapi import APIRouter, HTTPException, Query
 from uuid import UUID
+
+from fastapi import APIRouter, HTTPException, Query
 
 from domain.repositories import MarketRepository
 from infrastructure.database.session import SessionDep
 from schemas import (
     MarketSnapshotListResponse,
     MarketSnapshotResponse,
-    SnapshotQueryParams,
 )
 
 router = APIRouter(prefix="/markets", tags=["markets"])
@@ -36,9 +36,7 @@ async def get_all_markets(
     snapshots = await repo.get_all_latest(skip=skip, limit=limit)
 
     return MarketSnapshotListResponse(
-        snapshots=[
-            MarketSnapshotResponse.model_validate(s) for s in snapshots
-        ],
+        snapshots=[MarketSnapshotResponse.model_validate(s) for s in snapshots],
         total=len(snapshots),
         skip=skip,
         limit=limit,
@@ -67,9 +65,7 @@ async def get_snapshots(
     snapshots = await repo.get_by_ticker(ticker, skip=skip, limit=limit)
 
     return MarketSnapshotListResponse(
-        snapshots=[
-            MarketSnapshotResponse.model_validate(s) for s in snapshots
-        ],
+        snapshots=[MarketSnapshotResponse.model_validate(s) for s in snapshots],
         total=len(snapshots),
         skip=skip,
         limit=limit,
@@ -77,9 +73,7 @@ async def get_snapshots(
 
 
 @router.get("/{ticker}/latest", response_model=MarketSnapshotResponse)
-async def get_latest_snapshot(
-    ticker: str, session: SessionDep
-) -> MarketSnapshotResponse:
+async def get_latest_snapshot(ticker: str, session: SessionDep) -> MarketSnapshotResponse:
     """Get most recent snapshot for a market.
 
     Args:
@@ -96,17 +90,13 @@ async def get_latest_snapshot(
     snapshot = await repo.get_latest_by_ticker(ticker)
 
     if snapshot is None:
-        raise HTTPException(
-            status_code=404, detail=f"No snapshots found for ticker {ticker}"
-        )
+        raise HTTPException(status_code=404, detail=f"No snapshots found for ticker {ticker}")
 
     return MarketSnapshotResponse.model_validate(snapshot)
 
 
 @router.get("/{id}", response_model=MarketSnapshotResponse)
-async def get_snapshot_by_id(
-    id: UUID, session: SessionDep
-) -> MarketSnapshotResponse:
+async def get_snapshot_by_id(id: UUID, session: SessionDep) -> MarketSnapshotResponse:
     """Get market snapshot by ID.
 
     Args:
@@ -123,8 +113,6 @@ async def get_snapshot_by_id(
     snapshot = await repo.get(id)
 
     if snapshot is None:
-        raise HTTPException(
-            status_code=404, detail=f"Snapshot {id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Snapshot {id} not found")
 
     return MarketSnapshotResponse.model_validate(snapshot)

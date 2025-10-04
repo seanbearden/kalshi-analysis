@@ -47,9 +47,7 @@ export default function MarketsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Markets</h1>
-        <p className="mt-2 text-muted-foreground">
-          Browse active prediction markets from Kalshi
-        </p>
+        <p className="mt-2 text-muted-foreground">Browse active prediction markets from Kalshi</p>
       </div>
 
       <div className="rounded-lg border bg-card">
@@ -88,8 +86,8 @@ export default function MarketsPage() {
                         market.source === 'POLL'
                           ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                           : market.source === 'WEBSOCKET'
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                          : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
                       }`}
                     >
                       {market.source}

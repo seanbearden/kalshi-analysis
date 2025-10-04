@@ -6,7 +6,7 @@
 1. **Directory structure** (infrastructure/, domain/, schemas/)
    - Create all necessary folders
    - Add `__init__.py` files
-   
+
 2. **Separate poller container** (CRITICAL)
    - Extract `poller.py` as standalone script
    - Create docker-compose with `poller` + `api` services

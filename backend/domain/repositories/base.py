@@ -38,9 +38,7 @@ class BaseRepository(Generic[ModelType]):
         """
         return await self.session.get(self.model, id)
 
-    async def get_all(
-        self, skip: int = 0, limit: int = 100
-    ) -> list[ModelType]:
+    async def get_all(self, skip: int = 0, limit: int = 100) -> list[ModelType]:
         """Get all records with pagination.
 
         Args:

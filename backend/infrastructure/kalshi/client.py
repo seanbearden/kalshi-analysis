@@ -59,9 +59,7 @@ class KalshiClient:
         retry=retry_if_exception_type(httpx.HTTPStatusError),
         reraise=True,
     )
-    async def _request(
-        self, method: str, endpoint: str, **kwargs: Any
-    ) -> dict[str, Any]:
+    async def _request(self, method: str, endpoint: str, **kwargs: Any) -> dict[str, Any]:
         """Make HTTP request with retry logic.
 
         Args:
@@ -81,9 +79,7 @@ class KalshiClient:
             return response.json()
 
         except httpx.HTTPStatusError as e:
-            logger.error(
-                f"Kalshi API error: {e.response.status_code} - {e.response.text}"
-            )
+            logger.error(f"Kalshi API error: {e.response.status_code} - {e.response.text}")
             raise KalshiAPIError(
                 f"API request failed: {e.response.status_code}",
                 status_code=e.response.status_code,
@@ -93,9 +89,7 @@ class KalshiClient:
             logger.error(f"Kalshi request error: {str(e)}")
             raise KalshiAPIError(f"Request failed: {str(e)}") from e
 
-    async def get_events(
-        self, status: str | None = None, limit: int = 100
-    ) -> dict[str, Any]:
+    async def get_events(self, status: str | None = None, limit: int = 100) -> dict[str, Any]:
         """Get Kalshi events.
 
         Args:
@@ -146,9 +140,7 @@ class KalshiClient:
         """
         return await self._request("GET", f"/markets/{ticker}")
 
-    async def get_orderbook(
-        self, ticker: str, depth: int = 10
-    ) -> dict[str, Any]:
+    async def get_orderbook(self, ticker: str, depth: int = 10) -> dict[str, Any]:
         """Get market order book.
 
         Args:
@@ -159,13 +151,9 @@ class KalshiClient:
             Order book data
         """
         params = {"depth": depth}
-        return await self._request(
-            "GET", f"/markets/{ticker}/orderbook", params=params
-        )
+        return await self._request("GET", f"/markets/{ticker}/orderbook", params=params)
 
-    async def get_trades(
-        self, ticker: str, limit: int = 100
-    ) -> dict[str, Any]:
+    async def get_trades(self, ticker: str, limit: int = 100) -> dict[str, Any]:
         """Get recent trades for market.
 
         Args:
@@ -176,9 +164,7 @@ class KalshiClient:
             Trades data
         """
         params = {"limit": limit}
-        return await self._request(
-            "GET", f"/markets/{ticker}/trades", params=params
-        )
+        return await self._request("GET", f"/markets/{ticker}/trades", params=params)
 
     async def close(self) -> None:
         """Close HTTP client."""

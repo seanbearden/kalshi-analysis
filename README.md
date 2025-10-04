@@ -3,7 +3,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Node.js](https://img.shields.io/badge/node.js-22+-green.svg)](https://nodejs.org/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6.svg)](https://www.typescriptlang.org/)
 
@@ -125,7 +124,7 @@ kalshi-analysis/
 
 ### Developer Experience (All Phases)
 * Type safety: Pydantic + TypeScript
-* Pre-commit hooks: Ruff, Black, ESLint, Prettier
+* Pre-commit hooks: Ruff, ESLint, Prettier
 * Hot reload for backend and frontend
 * `make demo` command for one-click local launch
 
@@ -233,7 +232,7 @@ jupyter notebook
 
 ```env
 KALSHI_API_BASE=https://demo-api.kalshi.com/v2
-DB_URL=postgresql://user:pass@localhost:5432/kalshi
+DB_URL=postgresql://user:pass@localhost:5432/kalshi  # pragma: allowlist secret
 POLL_INTERVAL_SECONDS=5
 LOG_LEVEL=INFO
 ```
@@ -344,7 +343,7 @@ query MarketDetail($ticker: String!) {
 * **Pytest** for backend unit tests (Pydantic models, API routes)
 * **Hypothesis** for property-based testing (data validation)
 * **Type checking**: mypy (backend) + TypeScript strict mode (frontend)
-* **Linting**: Ruff + Black (Python), ESLint + Prettier (TypeScript)
+* **Linting**: Ruff (Python), ESLint + Prettier (TypeScript)
 * **Pre-commit hooks** for code quality enforcement
 
 ### Phase 2+ Testing (Planned)

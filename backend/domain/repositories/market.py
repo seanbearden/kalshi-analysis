@@ -38,9 +38,7 @@ class MarketRepository(BaseRepository[MarketSnapshot]):
         result = await self.session.execute(stmt)
         return list(result.scalars().all())
 
-    async def get_all_latest(
-        self, skip: int = 0, limit: int = 100
-    ) -> list[MarketSnapshot]:
+    async def get_all_latest(self, skip: int = 0, limit: int = 100) -> list[MarketSnapshot]:
         """Get latest snapshot for each unique ticker.
 
         Args:

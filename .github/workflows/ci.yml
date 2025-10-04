@@ -35,10 +35,10 @@ jobs:
           cd backend
           ruff check .
 
-      - name: Format check with Black
+      - name: Format check with Ruff
         run: |
           cd backend
-          black --check .
+          ruff format --check .
 
       - name: Type check with mypy
         run: |

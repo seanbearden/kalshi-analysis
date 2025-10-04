@@ -9,7 +9,6 @@ from domain.repositories import BacktestRepository
 from infrastructure.database.session import SessionDep
 from schemas import (
     BacktestCreateRequest,
-    BacktestQueryParams,
     BacktestResultListResponse,
     BacktestResultResponse,
 )
@@ -54,9 +53,7 @@ async def list_backtests(
         results = results_with_executions
 
     return BacktestResultListResponse(
-        results=[
-            BacktestResultResponse.model_validate(r) for r in results
-        ],
+        results=[BacktestResultResponse.model_validate(r) for r in results],
         total=len(results),
         skip=skip,
         limit=limit,
@@ -88,9 +85,7 @@ async def get_backtest(
         backtest = await repo.get(id)
 
     if backtest is None:
-        raise HTTPException(
-            status_code=404, detail=f"Backtest {id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Backtest {id} not found")
 
     return BacktestResultResponse.model_validate(backtest)
 

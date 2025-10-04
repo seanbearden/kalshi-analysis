@@ -64,9 +64,7 @@ class BacktestCreateRequest(BaseModel):
     market_filter: str | None = Field(
         None, description="Market selection criteria (e.g., 'politics')"
     )
-    parameters: dict = Field(
-        default_factory=dict, description="Strategy-specific parameters"
-    )
+    parameters: dict = Field(default_factory=dict, description="Strategy-specific parameters")
 
     @field_validator("end_date")
     @classmethod
@@ -81,8 +79,6 @@ class BacktestQueryParams(BaseModel):
     """Query parameters for backtest endpoints."""
 
     strategy: StrategyType | None = Field(None, description="Filter by strategy")
-    include_executions: bool = Field(
-        False, description="Include trade executions in response"
-    )
+    include_executions: bool = Field(False, description="Include trade executions in response")
     limit: int = Field(100, ge=1, le=1000, description="Maximum results")
     skip: int = Field(0, ge=0, description="Number of results to skip")

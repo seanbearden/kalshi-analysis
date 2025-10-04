@@ -238,20 +238,20 @@ export const env = envSchema.parse(import.meta.env);
 export function useWebSocket<T>(url: string, queryKey: string[]) {
   const queryClient = useQueryClient();
   const [isConnected, setIsConnected] = useState(false);
-  
+
   useEffect(() => {
     const ws = new WebSocket(url);
-    
+
     ws.onopen = () => setIsConnected(true);
     ws.onclose = () => setIsConnected(false);
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data) as T;
       queryClient.setQueryData(queryKey, data);
     };
-    
+
     return () => ws.close();
   }, [url, queryClient]);
-  
+
   return { isConnected };
 }
 
@@ -261,7 +261,7 @@ export function useOrderbookLive(ticker: string) {
     `ws://localhost:8000/ws/orderbook/${ticker}`,
     ['orderbook', ticker]
   );
-  
+
   return useQuery({
     queryKey: ['orderbook', ticker],
     queryFn: () => orderbookApi.get(ticker), // Fallback if WS disconnects
@@ -303,10 +303,10 @@ function MarketTable() {
 // ✅ GOOD - Guard against undefined
 function MarketTable() {
   const { data, isLoading } = useMarkets();
-  
+
   if (isLoading) return <TableSkeleton />;
   if (!data) return <EmptyState />;
-  
+
   return <Table data={data} />;
 }
 ```
@@ -316,7 +316,7 @@ function MarketTable() {
 // ❌ BAD - Manual data fetching
 function MarketDetail({ ticker }: Props) {
   const [market, setMarket] = useState();
-  
+
   useEffect(() => {
     fetch(`/api/markets/${ticker}`)
       .then(r => r.json())
@@ -367,7 +367,7 @@ test('renders market data', async () => {
       <MarketTable />
     </QueryClientProvider>
   );
-  
+
   expect(await screen.findByText('PREZ-2024')).toBeInTheDocument();
 });
 ```
