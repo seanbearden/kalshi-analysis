@@ -64,7 +64,7 @@ describe('Footer', () => {
   })
 
   it('applies hover styles to social links', () => {
-    const { container } = render(<Footer />)
+    render(<Footer />)
     const socialLink = screen.getByLabelText('GitHub')
     expect(socialLink).toHaveClass('hover:text-foreground')
   })
