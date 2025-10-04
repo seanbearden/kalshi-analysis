@@ -48,16 +48,24 @@ jobs:
       - name: Run tests with pytest
         run: |
           cd backend
-          pytest tests/ -v --cov=. --cov-report=xml --junitxml=junit.xml || test $? -eq 5 && echo "No tests yet - skipping"
+          pytest tests/ -v --cov=. --cov-report=xml --junitxml=junit.xml -o junit_family=legacy || test $? -eq 5 && echo "No tests yet - skipping"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         if: always() && hashFiles('backend/coverage.xml') != ''
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./backend/coverage.xml,./backend/junit.xml
+          files: ./backend/coverage.xml
           flags: backend
           name: backend-${{ matrix.python-version }}
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./backend/junit.xml
+          flags: backend
 
   frontend:
     name: Frontend (TypeScript)
@@ -106,14 +114,22 @@ jobs:
           cd frontend
           pnpm test:ci
 
-      - name: Upload coverage and test results to Codecov
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         if: always() && hashFiles('frontend/coverage/coverage-final.json') != ''
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./frontend/coverage/coverage-final.json,./frontend/test-results.xml
+          files: ./frontend/coverage/coverage-final.json
           flags: frontend
           name: frontend-${{ matrix.node-version }}
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./frontend/test-results.xml
+          flags: frontend
 
       - name: Build
         run: |
