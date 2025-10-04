@@ -6,7 +6,7 @@ hypothesis>=6.98.0
 
 # Code Quality
 ruff>=0.13.3
-mypy>=1.8.0
+mypy>=1.13.0
 pre-commit>=3.6.0
 
 # Type Stubs
