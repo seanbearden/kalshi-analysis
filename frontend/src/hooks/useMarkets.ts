@@ -4,6 +4,11 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { marketsApi, type MarketSnapshot, type MarketSnapshotListResponse } from '@/api/markets'
 
+interface UseAllMarketsParams {
+  skip?: number
+  limit?: number
+}
+
 interface UseMarketsParams {
   ticker: string
   skip?: number
@@ -11,9 +16,25 @@ interface UseMarketsParams {
 }
 
 /**
- * Hook to fetch market snapshots with auto-refresh
+ * Hook to fetch all markets (latest snapshot for each ticker)
  */
 export function useMarkets({
+  skip = 0,
+  limit = 100,
+}: UseAllMarketsParams = {}): UseQueryResult<MarketSnapshotListResponse> {
+  return useQuery({
+    queryKey: ['markets', 'all', skip, limit],
+    queryFn: () => marketsApi.getAllMarkets({ skip, limit }),
+    staleTime: 5_000, // 5s (matches backend polling interval)
+    refetchInterval: 5_000, // Auto-refresh every 5s
+    placeholderData: (previousData) => previousData, // Prevent loading jumps
+  })
+}
+
+/**
+ * Hook to fetch market snapshots for a specific ticker with auto-refresh
+ */
+export function useMarketSnapshots({
   ticker,
   skip = 0,
   limit = 100,

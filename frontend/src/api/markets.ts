@@ -29,6 +29,14 @@ export interface MarketQueryParams {
 
 export const marketsApi = {
   /**
+   * Get latest snapshot for all markets
+   */
+  getAllMarkets: async (params?: MarketQueryParams): Promise<MarketSnapshotListResponse> => {
+    const { data } = await apiClient.get('/api/v1/markets', { params })
+    return data
+  },
+
+  /**
    * Get all snapshots for a ticker
    */
   getSnapshots: async (
