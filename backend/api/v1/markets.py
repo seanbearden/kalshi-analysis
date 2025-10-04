@@ -1,5 +1,6 @@
 """Markets API endpoints."""
 
+from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query
@@ -119,7 +120,7 @@ async def get_snapshot_by_id(id: UUID, session: SessionDep) -> MarketSnapshotRes
 
 
 @router.get("/{ticker}/gaps")
-async def get_sequence_gaps(ticker: str, session: SessionDep) -> dict:
+async def get_sequence_gaps(ticker: str, session: SessionDep) -> dict[str, Any]:
     """Get WebSocket sequence gaps for a ticker.
 
     Phase 2 feature: Monitor data integrity by detecting missing sequences.

@@ -9,6 +9,7 @@ import asyncio
 import logging
 from datetime import datetime
 from decimal import Decimal
+from typing import Any
 
 from core.config import get_settings
 from domain.models import DataSource
@@ -120,7 +121,7 @@ class MarketPoller:
                 logger.error(f"WebSocket error: {e}", exc_info=True)
                 await asyncio.sleep(5)  # Wait before reconnecting
 
-    async def _save_websocket_snapshot(self, message: dict) -> None:
+    async def _save_websocket_snapshot(self, message: dict[str, Any]) -> None:
         """Save WebSocket market update to database.
 
         Args:
@@ -153,8 +154,8 @@ class MarketPoller:
                     ticker=ticker,
                     timestamp=timestamp,
                     source=DataSource.WEBSOCKET,
-                    yes_price=yes_price,
-                    no_price=no_price,
+                    yes_price=float(yes_price),
+                    no_price=float(no_price),
                     volume=volume,
                     raw_data=message,
                     sequence=sequence,

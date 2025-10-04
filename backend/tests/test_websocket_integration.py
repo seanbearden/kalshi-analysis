@@ -3,6 +3,7 @@
 Tests WebSocket client, gap detection, and dual data source orchestration.
 """
 
+from datetime import datetime
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -97,7 +98,7 @@ class TestGapDetection:
         # Create snapshots with gap at sequence 3
         await repo.create_snapshot(
             ticker="TEST",
-            timestamp="2024-10-04T19:30:00+00:00",
+            timestamp=datetime.fromisoformat("2024-10-04T19:30:00+00:00"),
             source=DataSource.WEBSOCKET,
             yes_price=50,
             no_price=50,
@@ -107,7 +108,7 @@ class TestGapDetection:
         )
         await repo.create_snapshot(
             ticker="TEST",
-            timestamp="2024-10-04T19:30:01+00:00",
+            timestamp=datetime.fromisoformat("2024-10-04T19:30:01+00:00"),
             source=DataSource.WEBSOCKET,
             yes_price=51,
             no_price=49,
@@ -117,7 +118,7 @@ class TestGapDetection:
         )
         await repo.create_snapshot(
             ticker="TEST",
-            timestamp="2024-10-04T19:30:03+00:00",
+            timestamp=datetime.fromisoformat("2024-10-04T19:30:03+00:00"),
             source=DataSource.WEBSOCKET,
             yes_price=52,
             no_price=48,
@@ -142,7 +143,7 @@ class TestGapDetection:
         for seq in range(1, 6):
             await repo.create_snapshot(
                 ticker="TEST",
-                timestamp=f"2024-10-04T19:30:0{seq}+00:00",
+                timestamp=datetime.fromisoformat(f"2024-10-04T19:30:0{seq}+00:00"),
                 source=DataSource.WEBSOCKET,
                 yes_price=50,
                 no_price=50,
@@ -166,7 +167,7 @@ class TestGapDetection:
         for seq in [1, 2, 4, 7, 8]:
             await repo.create_snapshot(
                 ticker="TEST",
-                timestamp=f"2024-10-04T19:30:0{seq}+00:00",
+                timestamp=datetime.fromisoformat(f"2024-10-04T19:30:0{seq}+00:00"),
                 source=DataSource.WEBSOCKET,
                 yes_price=50,
                 no_price=50,
@@ -193,7 +194,7 @@ class TestDualDataSources:
         # Save REST snapshot
         await repo.create_snapshot(
             ticker="TEST",
-            timestamp="2024-10-04T19:30:00+00:00",
+            timestamp=datetime.fromisoformat("2024-10-04T19:30:00+00:00"),
             source=DataSource.POLL,
             yes_price=50,
             no_price=50,
@@ -205,7 +206,7 @@ class TestDualDataSources:
         # Save WebSocket snapshot
         await repo.create_snapshot(
             ticker="TEST",
-            timestamp="2024-10-04T19:30:01+00:00",
+            timestamp=datetime.fromisoformat("2024-10-04T19:30:01+00:00"),
             source=DataSource.WEBSOCKET,
             yes_price=51,
             no_price=49,
@@ -234,7 +235,7 @@ class TestDualDataSources:
         # REST snapshot (older)
         await repo.create_snapshot(
             ticker="TEST",
-            timestamp="2024-10-04T19:30:00+00:00",
+            timestamp=datetime.fromisoformat("2024-10-04T19:30:00+00:00"),
             source=DataSource.POLL,
             yes_price=50,
             no_price=50,
@@ -245,7 +246,7 @@ class TestDualDataSources:
         # WebSocket snapshot (newer)
         await repo.create_snapshot(
             ticker="TEST",
-            timestamp="2024-10-04T19:30:05+00:00",
+            timestamp=datetime.fromisoformat("2024-10-04T19:30:05+00:00"),
             source=DataSource.WEBSOCKET,
             yes_price=52,
             no_price=48,
@@ -259,5 +260,6 @@ class TestDualDataSources:
         # Get latest
         latest = await repo.get_latest_by_ticker("TEST")
 
+        assert latest is not None
         assert latest.source == DataSource.WEBSOCKET
         assert latest.yes_price == 0.52
