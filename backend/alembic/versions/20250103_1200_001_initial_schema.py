@@ -19,6 +19,9 @@ down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
+# Mark as public to indicate these variables are used by Alembic via introspection
+__all__ = ["revision", "down_revision", "branch_labels", "depends_on", "upgrade", "downgrade"]
+
 
 def upgrade() -> None:
     # Create market_snapshots table
