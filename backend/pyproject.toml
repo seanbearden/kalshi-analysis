@@ -73,6 +73,8 @@ warn_unused_configs = true
 disallow_untyped_defs = true
 plugins = ["pydantic.mypy"]
 exclude = ["^build/", "^dist/"]
+mypy_path = "."
+namespace_packages = true
 
 [[tool.mypy.overrides]]
 module = "tests.*"
