@@ -41,6 +41,10 @@ class Settings(BaseSettings):
     kalshi_request_timeout_seconds: int = 10
     kalshi_max_retries: int = 3
 
+    # Kalshi Authentication (optional - for production API access)
+    kalshi_api_key_id: str | None = None
+    kalshi_private_key_path: str | None = None
+
     # Rate Limiting
     rate_limit_per_minute: int = 60
 
