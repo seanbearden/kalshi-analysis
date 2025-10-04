@@ -22,6 +22,20 @@ coverage:
         target: 80%
         threshold: 2%
 
+      # Backend patch coverage
+      backend:
+        target: 80%
+        threshold: 2%
+        flags:
+          - backend
+
+      # Frontend patch coverage
+      frontend:
+        target: 80%
+        threshold: 2%
+        flags:
+          - frontend
+
       # WebSocket Infrastructure - Phase 2 Critical Files
       websocket_infra:
         target: 80%
