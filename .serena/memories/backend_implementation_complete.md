@@ -25,7 +25,7 @@
   - Exponential backoff (3 attempts, 2-10s)
   - Methods: get_events, get_markets, get_orderbook, get_trades
   - Comprehensive error handling
-  
+
 - **Database Session** (infrastructure/database/session.py):
   - Async engine with connection pooling
   - FastAPI dependency injection pattern
@@ -36,7 +36,7 @@
   - GET /api/v1/markets/{ticker}/snapshots
   - GET /api/v1/markets/{ticker}/latest
   - GET /api/v1/markets/{id}
-  
+
 - **Backtests Routes**:
   - GET /api/v1/backtests/
   - GET /api/v1/backtests/{id}

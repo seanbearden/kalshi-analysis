@@ -945,7 +945,7 @@ services:
       dockerfile: Dockerfile.poller
     environment:
       KALSHI_API_BASE: https://demo-api.kalshi.com/v2
-      DB_URL: postgresql+asyncpg://kalshi_user:dev_password@postgres/kalshi
+      DB_URL: postgresql+asyncpg://kalshi_user:dev_password@postgres/kalshi  # pragma: allowlist secret
       POLL_INTERVAL_SECONDS: 5
       LOG_LEVEL: INFO
     depends_on:
@@ -959,7 +959,7 @@ services:
     command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
     environment:
       KALSHI_API_BASE: https://demo-api.kalshi.com/v2
-      DB_URL: postgresql+asyncpg://kalshi_user:dev_password@postgres/kalshi
+      DB_URL: postgresql+asyncpg://kalshi_user:dev_password@postgres/kalshi  # pragma: allowlist secret
       LOG_LEVEL: DEBUG
       CORS_ORIGINS: '["http://localhost:5173"]'
     ports:
@@ -1225,7 +1225,7 @@ KALSHI_API_BASE=https://demo-api.kalshi.com/v2
 POLL_INTERVAL_SECONDS=5
 
 # Database
-DB_URL=postgresql+asyncpg://user:password@localhost:5432/kalshi
+DB_URL=postgresql+asyncpg://user:password@localhost:5432/kalshi  # pragma: allowlist secret
 
 # Application
 LOG_LEVEL=INFO

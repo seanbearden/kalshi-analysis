@@ -269,10 +269,11 @@ data/snapshots/
 data/cache/
 
 # Model artifacts
-models/
 *.pkl
 *.pickle
 *.joblib
+# Allow backend/domain/models source code
+!backend/domain/models/
 *.h5
 *.hdf5
 *.onnx

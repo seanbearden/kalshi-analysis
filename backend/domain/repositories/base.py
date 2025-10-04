@@ -1,6 +1,6 @@
 """Base repository with generic CRUD operations."""
 
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 from uuid import UUID
 
 from sqlalchemy import select
@@ -38,9 +38,7 @@ class BaseRepository(Generic[ModelType]):
         """
         return await self.session.get(self.model, id)
 
-    async def get_all(
-        self, skip: int = 0, limit: int = 100
-    ) -> list[ModelType]:
+    async def get_all(self, skip: int = 0, limit: int = 100) -> list[ModelType]:
         """Get all records with pagination.
 
         Args:
@@ -54,7 +52,7 @@ class BaseRepository(Generic[ModelType]):
         result = await self.session.execute(stmt)
         return list(result.scalars().all())
 
-    async def create(self, **kwargs) -> ModelType:
+    async def create(self, **kwargs: Any) -> ModelType:
         """Create new record.
 
         Args:

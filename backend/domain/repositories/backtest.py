@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from decimal import Decimal
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import desc, select
@@ -65,7 +66,7 @@ class BacktestRepository(BaseRepository[BacktestResult]):
         end_date: datetime,
         total_pnl: Decimal,
         total_trades: int,
-        parameters: dict,
+        parameters: dict[str, Any],
         market_filter: str | None = None,
         sharpe_ratio: Decimal | None = None,
         max_drawdown: Decimal | None = None,
@@ -113,7 +114,7 @@ class BacktestRepository(BaseRepository[BacktestResult]):
         size: int,
         pnl: Decimal,
         reason: str | None = None,
-        trade_metadata: dict | None = None,
+        trade_metadata: dict[str, Any] | None = None,
     ) -> BacktestExecution:
         """Add trade execution to backtest.
 

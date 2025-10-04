@@ -49,8 +49,8 @@ export default function BacktestsPage() {
             Backtesting strategies will appear here once you run your first backtest
           </p>
           <p className="mt-4 text-sm text-muted-foreground">
-            Phase 1 focuses on setting up the infrastructure. Strategy development
-            happens in Jupyter notebooks.
+            Phase 1 focuses on setting up the infrastructure. Strategy development happens in
+            Jupyter notebooks.
           </p>
         </div>
       </div>
@@ -110,9 +110,7 @@ export default function BacktestsPage() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Total Trades</p>
-                <p className="mt-1 text-lg font-semibold">
-                  {backtest.total_trades || '-'}
-                </p>
+                <p className="mt-1 text-lg font-semibold">{backtest.total_trades || '-'}</p>
               </div>
             </div>
           </div>

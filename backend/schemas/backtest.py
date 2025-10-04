@@ -2,9 +2,10 @@
 
 from datetime import datetime
 from decimal import Decimal
+from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 from domain.models import StrategyType, TradeDirection
 
@@ -39,7 +40,7 @@ class BacktestResultResponse(BaseModel):
     max_drawdown: Decimal | None = None
     win_rate: Decimal | None = None
     total_trades: int
-    parameters: dict
+    parameters: dict[str, Any]
     created_at: datetime
     executions: list[BacktestExecutionResponse] | None = None
 
@@ -64,13 +65,13 @@ class BacktestCreateRequest(BaseModel):
     market_filter: str | None = Field(
         None, description="Market selection criteria (e.g., 'politics')"
     )
-    parameters: dict = Field(
+    parameters: dict[str, Any] = Field(
         default_factory=dict, description="Strategy-specific parameters"
     )
 
     @field_validator("end_date")
     @classmethod
-    def validate_date_range(cls, v: datetime, info) -> datetime:
+    def validate_date_range(cls, v: datetime, info: ValidationInfo) -> datetime:
         """Ensure end_date is after start_date."""
         if "start_date" in info.data and v <= info.data["start_date"]:
             raise ValueError("end_date must be after start_date")
@@ -81,8 +82,6 @@ class BacktestQueryParams(BaseModel):
     """Query parameters for backtest endpoints."""
 
     strategy: StrategyType | None = Field(None, description="Filter by strategy")
-    include_executions: bool = Field(
-        False, description="Include trade executions in response"
-    )
+    include_executions: bool = Field(False, description="Include trade executions in response")
     limit: int = Field(100, ge=1, le=1000, description="Maximum results")
     skip: int = Field(0, ge=0, description="Number of results to skip")

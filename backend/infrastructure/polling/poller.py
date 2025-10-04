@@ -4,11 +4,8 @@ import asyncio
 import logging
 from datetime import datetime
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from core.config import get_settings
-from domain.models import DataSource, MarketSnapshot
+from domain.models import DataSource
 from domain.repositories import MarketRepository
 from infrastructure.database.session import get_session_maker
 from infrastructure.kalshi.client import KalshiClient
@@ -78,9 +75,7 @@ class MarketPoller:
     async def run(self) -> None:
         """Run polling loop."""
         self.running = True
-        logger.info(
-            f"Starting poller (interval: {self.settings.kalshi_poll_interval_seconds}s)"
-        )
+        logger.info(f"Starting poller (interval: {self.settings.kalshi_poll_interval_seconds}s)")
 
         while self.running:
             try:

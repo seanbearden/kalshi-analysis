@@ -63,4 +63,4 @@ def get_settings() -> Settings:
 
     Uses lru_cache to ensure settings are loaded once and reused.
     """
-    return Settings()  # type: ignore[call-arg]
+    return Settings()

@@ -29,9 +29,7 @@ function App() {
                   </Link>
                 </div>
               </div>
-              <div className="text-sm text-muted-foreground">
-                Phase 1: Local Analytics
-              </div>
+              <div className="text-sm text-muted-foreground">Phase 1: Local Analytics</div>
             </div>
           </div>
         </nav>

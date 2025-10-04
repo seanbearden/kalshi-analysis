@@ -1,6 +1,7 @@
 """Market repository with domain-specific queries."""
 
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -38,9 +39,7 @@ class MarketRepository(BaseRepository[MarketSnapshot]):
         result = await self.session.execute(stmt)
         return list(result.scalars().all())
 
-    async def get_all_latest(
-        self, skip: int = 0, limit: int = 100
-    ) -> list[MarketSnapshot]:
+    async def get_all_latest(self, skip: int = 0, limit: int = 100) -> list[MarketSnapshot]:
         """Get latest snapshot for each unique ticker.
 
         Args:
@@ -154,7 +153,7 @@ class MarketRepository(BaseRepository[MarketSnapshot]):
         yes_price: float,
         no_price: float,
         volume: int,
-        raw_data: dict,
+        raw_data: dict[str, Any],
         sequence: int | None = None,
     ) -> MarketSnapshot:
         """Create market snapshot with validation.

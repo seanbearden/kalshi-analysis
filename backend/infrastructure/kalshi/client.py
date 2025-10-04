@@ -1,7 +1,7 @@
 """Kalshi API client with retry logic and resilience patterns."""
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 import httpx
 from tenacity import (
@@ -49,7 +49,12 @@ class KalshiClient:
         """Async context manager entry."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: Any,
+    ) -> None:
         """Async context manager exit - close client."""
         await self.client.aclose()
 
@@ -59,9 +64,7 @@ class KalshiClient:
         retry=retry_if_exception_type(httpx.HTTPStatusError),
         reraise=True,
     )
-    async def _request(
-        self, method: str, endpoint: str, **kwargs: Any
-    ) -> dict[str, Any]:
+    async def _request(self, method: str, endpoint: str, **kwargs: Any) -> dict[str, Any]:
         """Make HTTP request with retry logic.
 
         Args:
@@ -78,12 +81,10 @@ class KalshiClient:
         try:
             response = await self.client.request(method, endpoint, **kwargs)
             response.raise_for_status()
-            return response.json()
+            return cast(dict[str, Any], response.json())
 
         except httpx.HTTPStatusError as e:
-            logger.error(
-                f"Kalshi API error: {e.response.status_code} - {e.response.text}"
-            )
+            logger.error(f"Kalshi API error: {e.response.status_code} - {e.response.text}")
             raise KalshiAPIError(
                 f"API request failed: {e.response.status_code}",
                 status_code=e.response.status_code,
@@ -93,9 +94,7 @@ class KalshiClient:
             logger.error(f"Kalshi request error: {str(e)}")
             raise KalshiAPIError(f"Request failed: {str(e)}") from e
 
-    async def get_events(
-        self, status: str | None = None, limit: int = 100
-    ) -> dict[str, Any]:
+    async def get_events(self, status: str | None = None, limit: int = 100) -> dict[str, Any]:
         """Get Kalshi events.
 
         Args:
@@ -105,7 +104,7 @@ class KalshiClient:
         Returns:
             Events data
         """
-        params = {"limit": limit}
+        params: dict[str, Any] = {"limit": limit}
         if status:
             params["status"] = status
 
@@ -127,7 +126,7 @@ class KalshiClient:
         Returns:
             Markets data
         """
-        params = {"limit": limit}
+        params: dict[str, Any] = {"limit": limit}
         if event_ticker:
             params["event_ticker"] = event_ticker
         if status:
@@ -146,9 +145,7 @@ class KalshiClient:
         """
         return await self._request("GET", f"/markets/{ticker}")
 
-    async def get_orderbook(
-        self, ticker: str, depth: int = 10
-    ) -> dict[str, Any]:
+    async def get_orderbook(self, ticker: str, depth: int = 10) -> dict[str, Any]:
         """Get market order book.
 
         Args:
@@ -158,14 +155,10 @@ class KalshiClient:
         Returns:
             Order book data
         """
-        params = {"depth": depth}
-        return await self._request(
-            "GET", f"/markets/{ticker}/orderbook", params=params
-        )
+        params: dict[str, Any] = {"depth": depth}
+        return await self._request("GET", f"/markets/{ticker}/orderbook", params=params)
 
-    async def get_trades(
-        self, ticker: str, limit: int = 100
-    ) -> dict[str, Any]:
+    async def get_trades(self, ticker: str, limit: int = 100) -> dict[str, Any]:
         """Get recent trades for market.
 
         Args:
@@ -175,10 +168,8 @@ class KalshiClient:
         Returns:
             Trades data
         """
-        params = {"limit": limit}
-        return await self._request(
-            "GET", f"/markets/{ticker}/trades", params=params
-        )
+        params: dict[str, Any] = {"limit": limit}
+        return await self._request("GET", f"/markets/{ticker}/trades", params=params)
 
     async def close(self) -> None:
         """Close HTTP client."""

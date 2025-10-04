@@ -1,5 +1,6 @@
 """Backtests API endpoints."""
 
+from decimal import Decimal
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query
@@ -9,7 +10,6 @@ from domain.repositories import BacktestRepository
 from infrastructure.database.session import SessionDep
 from schemas import (
     BacktestCreateRequest,
-    BacktestQueryParams,
     BacktestResultListResponse,
     BacktestResultResponse,
 )
@@ -54,9 +54,7 @@ async def list_backtests(
         results = results_with_executions
 
     return BacktestResultListResponse(
-        results=[
-            BacktestResultResponse.model_validate(r) for r in results
-        ],
+        results=[BacktestResultResponse.model_validate(r) for r in results],
         total=len(results),
         skip=skip,
         limit=limit,
@@ -88,9 +86,7 @@ async def get_backtest(
         backtest = await repo.get(id)
 
     if backtest is None:
-        raise HTTPException(
-            status_code=404, detail=f"Backtest {id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Backtest {id} not found")
 
     return BacktestResultResponse.model_validate(backtest)
 
@@ -121,7 +117,7 @@ async def create_backtest(
         start_date=request.start_date,
         end_date=request.end_date,
         market_filter=request.market_filter,
-        total_pnl=0,
+        total_pnl=Decimal("0"),
         total_trades=0,
         parameters=request.parameters,
     )

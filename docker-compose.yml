@@ -5,7 +5,7 @@ services:
     container_name: kalshi-postgres
     environment:
       POSTGRES_USER: kalshi
-      POSTGRES_PASSWORD: kalshi
+      POSTGRES_PASSWORD: kalshi  # pragma: allowlist secret
       POSTGRES_DB: kalshi
     ports:
       - "5432:5432"
