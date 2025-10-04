@@ -22,6 +22,14 @@ coverage:
         target: 80%
         threshold: 2%
 
+      # WebSocket Infrastructure - Phase 2 Critical Files
+      websocket_infra:
+        target: 80%
+        threshold: 5%
+        paths:
+          - backend/infrastructure/kalshi/websocket_client.py
+          - backend/infrastructure/polling/gap_filler.py
+
 # Component configuration for monorepo
 component_management:
   individual_components:
