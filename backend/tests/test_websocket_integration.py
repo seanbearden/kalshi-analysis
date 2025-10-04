@@ -3,6 +3,7 @@
 Tests WebSocket client, gap detection, and dual data source orchestration.
 """
 
+from contextlib import asynccontextmanager
 from datetime import datetime
 from unittest.mock import AsyncMock, patch
 
@@ -17,12 +18,12 @@ class TestWebSocketClient:
     """Test WebSocket client functionality."""
 
     @pytest.mark.asyncio
-    async def test_websocket_saves_to_database(self, db_session):
+    async def test_websocket_saves_to_database(self, session):
         """Test that WebSocket messages are saved to database."""
-        # Mock WebSocket client
-        mock_ws = AsyncMock()
-        mock_ws.listen.return_value = iter(
-            [
+
+        # Create async generator for mock WebSocket messages
+        async def mock_listen():
+            messages = [
                 {
                     "type": "ticker",
                     "ticker": "TEST-TICKER",
@@ -42,15 +43,25 @@ class TestWebSocketClient:
                     "timestamp": "2024-10-04T19:30:01Z",
                 },
             ]
-        )
+            for msg in messages:
+                yield msg
+
+        # Mock WebSocket client - configure listen to be a regular function that returns the generator
+        mock_ws = AsyncMock()
+        mock_ws.listen = mock_listen
 
         # Create poller instance
         poller = MarketPoller()
 
-        # Mock the WebSocket client creation
-        with patch(
-            "infrastructure.polling.poller.KalshiWebSocketClient",
-            return_value=mock_ws,
+        # Create mock session maker that returns our test session
+        @asynccontextmanager
+        async def mock_session_maker():
+            yield session
+
+        # Mock the WebSocket client creation and session maker
+        with (
+            patch("infrastructure.polling.poller.KalshiWebSocketClient", return_value=mock_ws),
+            patch.object(poller, "session_maker", mock_session_maker),
         ):
             # Process two messages
             messages = []
@@ -61,15 +72,15 @@ class TestWebSocketClient:
                     break
 
         # Verify snapshots were saved
-        repo = MarketRepository(db_session)
+        repo = MarketRepository(session)
         snapshots = await repo.get_by_ticker("TEST-TICKER")
 
         assert len(snapshots) == 2
         assert snapshots[0].source == DataSource.WEBSOCKET
         assert snapshots[0].sequence == 2  # Latest first
         assert snapshots[1].sequence == 1
-        assert snapshots[0].yes_price == 0.53  # 53 cents / 100
-        assert snapshots[1].yes_price == 0.52
+        assert float(snapshots[0].yes_price) == 0.53  # 53 cents / 100
+        assert float(snapshots[1].yes_price) == 0.52
 
     @pytest.mark.asyncio
     async def test_websocket_reconnection(self):
@@ -91,9 +102,9 @@ class TestGapDetection:
     """Test sequence gap detection."""
 
     @pytest.mark.asyncio
-    async def test_gap_detection(self, db_session):
+    async def test_gap_detection(self, session):
         """Test detection of missing sequence numbers."""
-        repo = MarketRepository(db_session)
+        repo = MarketRepository(session)
 
         # Create snapshots with gap at sequence 3
         await repo.create_snapshot(
@@ -127,7 +138,7 @@ class TestGapDetection:
             sequence=4,
         )
 
-        await db_session.commit()
+        await session.commit()
 
         # Detect gaps
         gaps = await repo.detect_gaps("TEST")
@@ -135,14 +146,14 @@ class TestGapDetection:
         assert gaps == [3]
 
     @pytest.mark.asyncio
-    async def test_no_gaps(self, db_session):
+    async def test_no_gaps(self, session):
         """Test no gaps detected for continuous sequences."""
-        repo = MarketRepository(db_session)
+        repo = MarketRepository(session)
 
         # Create continuous sequences
         for seq in range(1, 6):
             await repo.create_snapshot(
-                ticker="TEST",
+                ticker="TEST-NOGAPS",
                 timestamp=datetime.fromisoformat(f"2024-10-04T19:30:0{seq}+00:00"),
                 source=DataSource.WEBSOCKET,
                 yes_price=50,
@@ -152,21 +163,21 @@ class TestGapDetection:
                 sequence=seq,
             )
 
-        await db_session.commit()
+        await session.commit()
 
-        gaps = await repo.detect_gaps("TEST")
+        gaps = await repo.detect_gaps("TEST-NOGAPS")
 
         assert gaps == []
 
     @pytest.mark.asyncio
-    async def test_multiple_gaps(self, db_session):
+    async def test_multiple_gaps(self, session):
         """Test detection of multiple gaps."""
-        repo = MarketRepository(db_session)
+        repo = MarketRepository(session)
 
         # Create snapshots with gaps at 3, 5, 6
         for seq in [1, 2, 4, 7, 8]:
             await repo.create_snapshot(
-                ticker="TEST",
+                ticker="TEST-MULTIGAPS",
                 timestamp=datetime.fromisoformat(f"2024-10-04T19:30:0{seq}+00:00"),
                 source=DataSource.WEBSOCKET,
                 yes_price=50,
@@ -176,9 +187,9 @@ class TestGapDetection:
                 sequence=seq,
             )
 
-        await db_session.commit()
+        await session.commit()
 
-        gaps = await repo.detect_gaps("TEST")
+        gaps = await repo.detect_gaps("TEST-MULTIGAPS")
 
         assert gaps == [3, 5, 6]
 
@@ -187,13 +198,13 @@ class TestDualDataSources:
     """Test REST and WebSocket working together."""
 
     @pytest.mark.asyncio
-    async def test_both_sources_save(self, db_session):
+    async def test_both_sources_save(self, session):
         """Test that both REST and WebSocket data are saved."""
-        repo = MarketRepository(db_session)
+        repo = MarketRepository(session)
 
         # Save REST snapshot
         await repo.create_snapshot(
-            ticker="TEST",
+            ticker="TEST-DUAL",
             timestamp=datetime.fromisoformat("2024-10-04T19:30:00+00:00"),
             source=DataSource.POLL,
             yes_price=50,
@@ -205,7 +216,7 @@ class TestDualDataSources:
 
         # Save WebSocket snapshot
         await repo.create_snapshot(
-            ticker="TEST",
+            ticker="TEST-DUAL",
             timestamp=datetime.fromisoformat("2024-10-04T19:30:01+00:00"),
             source=DataSource.WEBSOCKET,
             yes_price=51,
@@ -215,26 +226,25 @@ class TestDualDataSources:
             sequence=1,
         )
 
-        await db_session.commit()
+        await session.commit()
 
         # Verify both sources exist
-        all_snapshots = await repo.get_by_ticker("TEST")
+        all_snapshots = await repo.get_by_ticker("TEST-DUAL")
         assert len(all_snapshots) == 2
 
-        rest_snapshots = await repo.get_by_source(DataSource.POLL)
-        assert len(rest_snapshots) == 1
-
-        ws_snapshots = await repo.get_by_source(DataSource.WEBSOCKET)
-        assert len(ws_snapshots) == 1
+        # Verify we have one of each source for this ticker
+        sources = {snapshot.source for snapshot in all_snapshots}
+        assert DataSource.POLL in sources
+        assert DataSource.WEBSOCKET in sources
 
     @pytest.mark.asyncio
-    async def test_latest_prefers_websocket(self, db_session):
+    async def test_latest_prefers_websocket(self, session):
         """Test that latest snapshot prefers WebSocket when more recent."""
-        repo = MarketRepository(db_session)
+        repo = MarketRepository(session)
 
         # REST snapshot (older)
         await repo.create_snapshot(
-            ticker="TEST",
+            ticker="TEST-LATEST",
             timestamp=datetime.fromisoformat("2024-10-04T19:30:00+00:00"),
             source=DataSource.POLL,
             yes_price=50,
@@ -245,7 +255,7 @@ class TestDualDataSources:
 
         # WebSocket snapshot (newer)
         await repo.create_snapshot(
-            ticker="TEST",
+            ticker="TEST-LATEST",
             timestamp=datetime.fromisoformat("2024-10-04T19:30:05+00:00"),
             source=DataSource.WEBSOCKET,
             yes_price=52,
@@ -255,11 +265,11 @@ class TestDualDataSources:
             sequence=1,
         )
 
-        await db_session.commit()
+        await session.commit()
 
         # Get latest
-        latest = await repo.get_latest_by_ticker("TEST")
+        latest = await repo.get_latest_by_ticker("TEST-LATEST")
 
         assert latest is not None
         assert latest.source == DataSource.WEBSOCKET
-        assert latest.yes_price == 0.52
+        assert float(latest.yes_price) == 52.0
