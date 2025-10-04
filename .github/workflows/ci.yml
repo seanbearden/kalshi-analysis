@@ -51,7 +51,7 @@ jobs:
           pytest tests/ -v --cov=. --cov-report=xml || test $? -eq 5 && echo "No tests yet - skipping"
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           file: ./backend/coverage.xml
           flags: backend
