@@ -52,8 +52,9 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
-        if: always()
+        if: always() && hashFiles('backend/coverage.xml') != ''
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./backend/coverage.xml
           flags: backend
           name: backend-${{ matrix.python-version }}
@@ -107,8 +108,9 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
-        if: always()
+        if: always() && hashFiles('frontend/coverage/coverage-final.json') != ''
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./frontend/coverage/coverage-final.json
           flags: frontend
           name: frontend-${{ matrix.node-version }}
