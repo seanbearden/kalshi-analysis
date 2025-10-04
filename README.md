@@ -3,6 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Node.js](https://img.shields.io/badge/node.js-22+-green.svg)](https://nodejs.org/)
+[![codecov](https://codecov.io/gh/seanbearden/kalshi-analysis/graph/badge.svg?token=4RQ1KYTXFK)](https://codecov.io/gh/seanbearden/kalshi-analysis)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6.svg)](https://www.typescriptlang.org/)
 
@@ -351,6 +352,10 @@ query MarketDetail($ticker: String!) {
 * E2E tests via Playwright
 * Vitest for frontend component testing
 * Load testing for real-time performance
+
+### Code Coverage
+
+![Coverage Sunburst](https://codecov.io/gh/seanbearden/kalshi-analysis/graphs/sunburst.svg?token=4RQ1KYTXFK)
 
 ---
 
