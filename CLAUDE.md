@@ -82,6 +82,29 @@ Key Codacy rules:
 
 This is non-negotiable. Quality gates are there to catch issues before they reach CI/CD.
 
+## 🚨 CRITICAL PYTHON VERSION REQUIREMENT
+
+### STRICTLY Python 3.11 ONLY
+
+**This project uses Python 3.11 exclusively.** NEVER use Python 3.12 or 3.13.
+
+- **ALWAYS use `python3.11` explicitly** - Never use `python3` or `python` which may default to other versions
+- **Local development**: Ensure `python3.11` is installed and used for all operations
+- **CI/CD**: Configured for Python 3.11 only
+- **Virtual environments**: Must use Python 3.11 base
+- **Type checking**: mypy must run with Python 3.11
+- **Testing**: pytest must run with Python 3.11
+
+**Examples of correct usage:**
+```bash
+python3.11 -m venv venv
+python3.11 -m pip install -r requirements.txt
+python3.11 -m mypy .
+python3.11 -m pytest
+```
+
+This is non-negotiable. Using the wrong Python version will cause compatibility issues.
+
 ## Architecture Principles from README
 
 - **Type safety**: Pydantic (backend) + TypeScript (frontend) + GraphQL schemas
