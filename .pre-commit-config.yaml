@@ -74,7 +74,7 @@ repos:
         files: ^frontend/.*\.(ts|tsx|js|jsx|json|css|md)$
         exclude: ^frontend/pnpm-lock\.yaml$
         additional_dependencies:
-          - prettier@3.2.5
+          - prettier@3.6.2
 
   # Dockerfile linting
   - repo: https://github.com/hadolint/hadolint
