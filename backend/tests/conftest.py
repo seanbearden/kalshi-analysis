@@ -123,7 +123,7 @@ async def sample_market_snapshot(session: AsyncSession) -> MarketSnapshot:
         raw_data={"event_ticker": "PRES", "market_ticker": "PRES-2024"},
     )
     session.add(snapshot)
-    await session.commit()
+    await session.flush()  # Flush instead of commit to maintain transaction isolation
     await session.refresh(snapshot)
     return snapshot
 
@@ -145,7 +145,7 @@ async def sample_backtest_result(session: AsyncSession) -> BacktestResult:
         metadata={"threshold": 0.05, "market_filter": "politics"},
     )
     session.add(result)
-    await session.commit()
+    await session.flush()  # Flush instead of commit to maintain transaction isolation
     await session.refresh(result)
     return result
 
