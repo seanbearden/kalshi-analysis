@@ -130,6 +130,7 @@ jobs:
 
       - name: Test Docker Compose
         run: |
+          cp backend/.env.example backend/.env
           docker compose up -d --wait
           docker compose ps
           docker compose down -v
