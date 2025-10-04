@@ -1,5 +1,9 @@
 # Codecov Configuration for Kalshi Market Insights
-# Enhanced PR comments with visualization and targeted patch coverage
+# https://docs.codecov.com/docs/codecovyml-reference
+
+codecov:
+  branch: main # Default branch for coverage comparison
+  max_report_age: '12h' # Reports older than 12 hours are considered stale
 
 # Coverage targets and thresholds
 coverage:
@@ -15,21 +19,9 @@ coverage:
 
 # Pull Request Comment Configuration
 comment:
-  # Enhanced layout with 2025 features
-  layout: "newheader, diff, flags, components, files, newfooter"
-
-  # Only comment when coverage changes to reduce noise
-  require_changes: true
-
-  # Collapse additional details for cleaner view
-  hide_comment_details: true
-
-  # Wait for both backend and frontend reports
-  after_n_builds: 2
-
-  # Don't require base/head - useful for first PRs
-  require_base: false
-  require_head: true
+  layout: 'reach,diff,flags,tree,sunburst'
+  behavior: default
+  require_changes: false
 
 # Flags for separating backend/frontend coverage
 flags:
@@ -83,36 +75,38 @@ component_management:
       paths:
         - frontend/src/components/**
 
-# Patch-specific configuration for critical files
+# GitHub Checks configuration
 github_checks:
   annotations: true
 
 # Ignore patterns
 ignore:
-  - "**/__pycache__/**"
-  - "**/node_modules/**"
-  - "**/.venv/**"
-  - "**/venv/**"
-  - "**/dist/**"
-  - "**/build/**"
-  - "**/.pytest_cache/**"
-  - "**/htmlcov/**"
-  - "**/*.md"
-  - "docs/**"
-  - "claudedocs/**"
+  # Test files
+  - '**/*.test.py'
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/test/**/*'
+  - '**/tests/**/*'
+  - '**/__tests__/**/*'
 
-# Parse coverage reports
-parsers:
-  gcov:
-    branch_detection:
-      conditional: yes
-      loop: yes
-      method: no
-      macro: no
+  # Build artifacts and dependencies
+  - '**/__pycache__/**'
+  - '**/node_modules/**'
+  - '**/.venv/**'
+  - '**/venv/**'
+  - '**/dist/**'
+  - '**/build/**'
+  - '**/.pytest_cache/**'
+  - '**/htmlcov/**'
+  - '**/coverage/**'
 
-# Notification settings (optional)
-slack:
-  enabled: false
+  # Configuration files
+  - '**/*.config.js'
+  - '**/*.config.ts'
+  - '**/vite.config.ts'
+  - '**/vitest.config.ts'
 
-github_checks:
-  annotations: true
+  # Documentation
+  - '**/*.md'
+  - 'docs/**'
+  - 'claudedocs/**'
