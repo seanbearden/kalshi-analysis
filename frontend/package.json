@@ -16,7 +16,7 @@
     "generate:types": "openapi-typescript http://localhost:8000/openapi.json -o src/types/api.ts"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.3.4",
+    "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.20.0",
     "@tanstack/react-query-devtools": "^5.20.0",
     "axios": "^1.6.7",
