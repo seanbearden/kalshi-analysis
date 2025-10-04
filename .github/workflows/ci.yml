@@ -52,6 +52,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
+        if: always()
         with:
           file: ./backend/coverage.xml
           flags: backend
@@ -103,6 +104,14 @@ jobs:
         run: |
           cd frontend
           pnpm test:ci
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        if: always()
+        with:
+          file: ./frontend/coverage/coverage-final.json
+          flags: frontend
+          name: frontend-${{ matrix.node-version }}
 
       - name: Build
         run: |

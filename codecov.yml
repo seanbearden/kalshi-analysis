@@ -1,0 +1,69 @@
+# Codecov Configuration
+# https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 2%
+        if_ci_failed: error
+
+    patch:
+      default:
+        target: 80%
+        threshold: 2%
+
+# Component configuration for monorepo
+component_management:
+  individual_components:
+    - component_id: backend
+      name: Backend API
+      paths:
+        - backend/**
+
+    - component_id: frontend
+      name: Frontend UI
+      paths:
+        - frontend/src/**
+
+# Flag configuration for separate coverage tracking
+flags:
+  backend:
+    paths:
+      - backend/
+    carryforward: true
+
+  frontend:
+    paths:
+      - frontend/src/
+    carryforward: true
+
+# Comment configuration
+comment:
+  layout: "reach,diff,flags,tree,components"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+# Ignore patterns
+ignore:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.test.py"
+  - "**/test_*.py"
+  - "**/__tests__/**"
+  - "**/tests/**"
+  - "**/*.config.js"
+  - "**/*.config.ts"
+  - "**/vite.config.ts"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/.venv/**"
+  - "**/venv/**"
+  - "**/node_modules/**"
