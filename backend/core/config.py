@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     db_echo: bool = False  # SQL query logging
 
     # Kalshi API
-    kalshi_api_base: str = "https://demo-api.kalshi.com/v2"
+    kalshi_api_base: str = "https://demo-api.kalshi.co/trade-api/v2"
     kalshi_poll_interval_seconds: int = 5
     kalshi_request_timeout_seconds: int = 10
     kalshi_max_retries: int = 3
