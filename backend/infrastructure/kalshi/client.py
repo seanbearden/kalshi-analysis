@@ -58,7 +58,7 @@ class KalshiClient:
         """Async context manager exit - close client."""
         await self.client.aclose()
 
-    @retry(  # type: ignore[misc]
+    @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
         retry=retry_if_exception_type(httpx.HTTPStatusError),
@@ -108,7 +108,7 @@ class KalshiClient:
         if status:
             params["status"] = status
 
-        return await self._request("GET", "/events", params=params)  # type: ignore[no-any-return]
+        return await self._request("GET", "/events", params=params)
 
     async def get_markets(
         self,
@@ -132,7 +132,7 @@ class KalshiClient:
         if status:
             params["status"] = status
 
-        return await self._request("GET", "/markets", params=params)  # type: ignore[no-any-return]
+        return await self._request("GET", "/markets", params=params)
 
     async def get_market(self, ticker: str) -> dict[str, Any]:
         """Get single market by ticker.
@@ -143,7 +143,7 @@ class KalshiClient:
         Returns:
             Market data
         """
-        return await self._request("GET", f"/markets/{ticker}")  # type: ignore[no-any-return]
+        return await self._request("GET", f"/markets/{ticker}")
 
     async def get_orderbook(self, ticker: str, depth: int = 10) -> dict[str, Any]:
         """Get market order book.
@@ -156,7 +156,7 @@ class KalshiClient:
             Order book data
         """
         params: dict[str, Any] = {"depth": depth}
-        return await self._request("GET", f"/markets/{ticker}/orderbook", params=params)  # type: ignore[no-any-return]
+        return await self._request("GET", f"/markets/{ticker}/orderbook", params=params)
 
     async def get_trades(self, ticker: str, limit: int = 100) -> dict[str, Any]:
         """Get recent trades for market.
@@ -169,7 +169,7 @@ class KalshiClient:
             Trades data
         """
         params: dict[str, Any] = {"limit": limit}
-        return await self._request("GET", f"/markets/{ticker}/trades", params=params)  # type: ignore[no-any-return]
+        return await self._request("GET", f"/markets/{ticker}/trades", params=params)
 
     async def close(self) -> None:
         """Close HTTP client."""

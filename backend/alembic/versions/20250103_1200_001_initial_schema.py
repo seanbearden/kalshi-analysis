@@ -11,7 +11,7 @@ from collections.abc import Sequence
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from alembic import op  # type: ignore[attr-defined]
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "001"
@@ -36,7 +36,7 @@ def upgrade() -> None:
         sa.Column("volume", sa.Integer(), nullable=False),
         sa.Column(
             "raw_data",
-            postgresql.JSON(astext_type=sa.Text()),
+            postgresql.JSON(astext_type=sa.Text()),  # type: ignore[no-untyped-call]
             nullable=False,
         ),
         sa.Column("created_at", sa.DateTime(), nullable=False),
@@ -83,7 +83,7 @@ def upgrade() -> None:
         sa.Column("total_trades", sa.Integer(), nullable=False),
         sa.Column(
             "parameters",
-            postgresql.JSON(astext_type=sa.Text()),
+            postgresql.JSON(astext_type=sa.Text()),  # type: ignore[no-untyped-call]
             nullable=False,
         ),
         sa.Column("created_at", sa.DateTime(), nullable=False),
@@ -111,7 +111,7 @@ def upgrade() -> None:
         sa.Column("reason", sa.Text(), nullable=True),
         sa.Column(
             "trade_metadata",
-            postgresql.JSON(astext_type=sa.Text()),
+            postgresql.JSON(astext_type=sa.Text()),  # type: ignore[no-untyped-call]
             nullable=True,
         ),
         sa.ForeignKeyConstraint(["backtest_id"], ["backtest_results.id"], ondelete="CASCADE"),
