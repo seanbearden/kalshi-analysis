@@ -35,6 +35,11 @@ dev = [
 requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["api*", "core*", "domain*", "infrastructure*", "schemas*"]
+exclude = ["tests*", "alembic*"]
+
 [tool.ruff]
 target-version = "py311"
 line-length = 100
