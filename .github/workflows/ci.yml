@@ -132,6 +132,8 @@ jobs:
           flags: frontend
 
       - name: Build
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           cd frontend
           pnpm build
