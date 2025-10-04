@@ -38,14 +38,17 @@ repos:
         files: ^backend/
 
   # Python: Type checking with mypy
+  # Runs from backend directory where package is installed via wrapper script
   - repo: local
     hooks:
       - id: mypy
-        name: mypy
-        entry: bash -c 'cd backend && mypy .'
-        language: system
-        files: ^backend/.*\.py$
+        name: mypy type checking
+        entry: .githooks/run-mypy.sh
+        language: script
+        types: [python]
+        files: ^backend/
         pass_filenames: false
+        require_serial: true
 
   # Frontend: ESLint
   - repo: https://github.com/pre-commit/mirrors-eslint

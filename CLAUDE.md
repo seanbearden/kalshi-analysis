@@ -64,6 +64,24 @@ Key Codacy rules:
 - Security scans mandatory after dependency changes
 - Use `codacy_cli_install` if CLI is not available
 
+## 🚨 CRITICAL GIT RULES
+
+### NEVER use `git commit --no-verify`
+
+**Pre-commit hooks exist for a reason.** If pre-commit hooks are failing:
+
+1. **FIX THE ISSUE** - Don't bypass it
+2. **FIX THE HOOK** - If the hook is broken, fix the hook configuration
+3. **NEVER BYPASS** - Using `--no-verify` defeats the entire purpose of quality gates
+
+**If you find yourself wanting to use `--no-verify`:**
+- STOP
+- Identify why the hook is failing
+- Fix the actual problem
+- Commit properly with hooks running
+
+This is non-negotiable. Quality gates are there to catch issues before they reach CI/CD.
+
 ## Architecture Principles from README
 
 - **Type safety**: Pydantic (backend) + TypeScript (frontend) + GraphQL schemas
