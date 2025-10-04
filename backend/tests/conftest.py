@@ -1,5 +1,6 @@
 """Shared test fixtures and configuration."""
 
+import os
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -20,7 +21,17 @@ from domain.models.market import DataSource
 from domain.repositories import BacktestRepository, MarketRepository
 from infrastructure.database.base import Base
 from infrastructure.database.session import get_session
-from main import app
+
+# Set minimal environment variables for test imports
+# Note: We use PostgreSQL URL format to satisfy Pydantic validation,
+# but tests use in-memory SQLite with overridden fixtures
+os.environ.setdefault(
+    "DB_URL",
+    "postgresql+asyncpg://test:test@localhost:5432/test",  # pragma: allowlist secret
+)
+os.environ.setdefault("KALSHI_API_BASE", "https://demo-api.kalshi.co/trade-api/v2")
+
+from main import app  # noqa: E402
 
 
 @pytest.fixture(scope="session")
