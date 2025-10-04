@@ -48,13 +48,13 @@ jobs:
       - name: Run tests with pytest
         run: |
           cd backend
-          pytest tests/ -v --cov=. --cov-report=xml || test $? -eq 5 && echo "No tests yet - skipping"
+          pytest tests/ -v --cov=. --cov-report=xml --junitxml=junit.xml || test $? -eq 5 && echo "No tests yet - skipping"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         if: always()
         with:
-          files: ./backend/coverage.xml
+          files: ./backend/coverage.xml,./backend/junit.xml
           flags: backend
           name: backend-${{ matrix.python-version }}
 
@@ -105,11 +105,11 @@ jobs:
           cd frontend
           pnpm test:ci
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage and test results to Codecov
         uses: codecov/codecov-action@v5
         if: always()
         with:
-          files: ./frontend/coverage/coverage-final.json
+          files: ./frontend/coverage/coverage-final.json,./frontend/test-results.xml
           flags: frontend
           name: frontend-${{ matrix.node-version }}
 
