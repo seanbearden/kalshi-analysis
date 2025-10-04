@@ -1,6 +1,6 @@
 """Base repository with generic CRUD operations."""
 
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 from uuid import UUID
 
 from sqlalchemy import select
@@ -52,7 +52,7 @@ class BaseRepository(Generic[ModelType]):
         result = await self.session.execute(stmt)
         return list(result.scalars().all())
 
-    async def create(self, **kwargs) -> ModelType:
+    async def create(self, **kwargs: Any) -> ModelType:
         """Create new record.
 
         Args:
@@ -65,7 +65,7 @@ class BaseRepository(Generic[ModelType]):
         self.session.add(instance)
         await self.session.flush()
         await self.session.refresh(instance)
-        return instance
+        return instance  # type: ignore[no-any-return]
 
     async def delete(self, id: UUID) -> bool:
         """Delete record by ID.

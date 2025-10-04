@@ -1,6 +1,7 @@
 """Market repository with domain-specific queries."""
 
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,7 +10,7 @@ from domain.models import DataSource, MarketSnapshot
 from domain.repositories.base import BaseRepository
 
 
-class MarketRepository(BaseRepository[MarketSnapshot]):
+class MarketRepository(BaseRepository[MarketSnapshot]):  # type: ignore[misc]
     """Repository for market snapshot operations."""
 
     def __init__(self, session: AsyncSession) -> None:
@@ -152,7 +153,7 @@ class MarketRepository(BaseRepository[MarketSnapshot]):
         yes_price: float,
         no_price: float,
         volume: int,
-        raw_data: dict,
+        raw_data: dict[str, Any],
         sequence: int | None = None,
     ) -> MarketSnapshot:
         """Create market snapshot with validation.

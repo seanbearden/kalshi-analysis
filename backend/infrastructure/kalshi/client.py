@@ -1,7 +1,7 @@
 """Kalshi API client with retry logic and resilience patterns."""
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 import httpx
 from tenacity import (
@@ -49,11 +49,16 @@ class KalshiClient:
         """Async context manager entry."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: Any,
+    ) -> None:
         """Async context manager exit - close client."""
         await self.client.aclose()
 
-    @retry(
+    @retry(  # type: ignore[misc]
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
         retry=retry_if_exception_type(httpx.HTTPStatusError),
@@ -76,7 +81,7 @@ class KalshiClient:
         try:
             response = await self.client.request(method, endpoint, **kwargs)
             response.raise_for_status()
-            return response.json()
+            return cast(dict[str, Any], response.json())
 
         except httpx.HTTPStatusError as e:
             logger.error(f"Kalshi API error: {e.response.status_code} - {e.response.text}")
@@ -99,11 +104,11 @@ class KalshiClient:
         Returns:
             Events data
         """
-        params = {"limit": limit}
+        params: dict[str, Any] = {"limit": limit}
         if status:
             params["status"] = status
 
-        return await self._request("GET", "/events", params=params)
+        return await self._request("GET", "/events", params=params)  # type: ignore[no-any-return]
 
     async def get_markets(
         self,
@@ -121,13 +126,13 @@ class KalshiClient:
         Returns:
             Markets data
         """
-        params = {"limit": limit}
+        params: dict[str, Any] = {"limit": limit}
         if event_ticker:
             params["event_ticker"] = event_ticker
         if status:
             params["status"] = status
 
-        return await self._request("GET", "/markets", params=params)
+        return await self._request("GET", "/markets", params=params)  # type: ignore[no-any-return]
 
     async def get_market(self, ticker: str) -> dict[str, Any]:
         """Get single market by ticker.
@@ -138,7 +143,7 @@ class KalshiClient:
         Returns:
             Market data
         """
-        return await self._request("GET", f"/markets/{ticker}")
+        return await self._request("GET", f"/markets/{ticker}")  # type: ignore[no-any-return]
 
     async def get_orderbook(self, ticker: str, depth: int = 10) -> dict[str, Any]:
         """Get market order book.
@@ -150,8 +155,8 @@ class KalshiClient:
         Returns:
             Order book data
         """
-        params = {"depth": depth}
-        return await self._request("GET", f"/markets/{ticker}/orderbook", params=params)
+        params: dict[str, Any] = {"depth": depth}
+        return await self._request("GET", f"/markets/{ticker}/orderbook", params=params)  # type: ignore[no-any-return]
 
     async def get_trades(self, ticker: str, limit: int = 100) -> dict[str, Any]:
         """Get recent trades for market.
@@ -163,8 +168,8 @@ class KalshiClient:
         Returns:
             Trades data
         """
-        params = {"limit": limit}
-        return await self._request("GET", f"/markets/{ticker}/trades", params=params)
+        params: dict[str, Any] = {"limit": limit}
+        return await self._request("GET", f"/markets/{ticker}/trades", params=params)  # type: ignore[no-any-return]
 
     async def close(self) -> None:
         """Close HTTP client."""
