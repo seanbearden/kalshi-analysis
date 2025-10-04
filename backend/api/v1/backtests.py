@@ -1,5 +1,6 @@
 """Backtests API endpoints."""
 
+from decimal import Decimal
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query
@@ -116,7 +117,7 @@ async def create_backtest(
         start_date=request.start_date,
         end_date=request.end_date,
         market_filter=request.market_filter,
-        total_pnl=0,
+        total_pnl=Decimal("0"),
         total_trades=0,
         parameters=request.parameters,
     )

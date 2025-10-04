@@ -34,7 +34,11 @@ def upgrade() -> None:
         sa.Column("yes_price", sa.Numeric(precision=10, scale=2), nullable=False),
         sa.Column("no_price", sa.Numeric(precision=10, scale=2), nullable=False),
         sa.Column("volume", sa.Integer(), nullable=False),
-        sa.Column("raw_data", postgresql.JSON(astext_type=sa.Text()), nullable=False),
+        sa.Column(
+            "raw_data",
+            postgresql.JSON(astext_type=sa.Text()),
+            nullable=False,
+        ),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -77,7 +81,11 @@ def upgrade() -> None:
         sa.Column("max_drawdown", sa.Numeric(precision=6, scale=3), nullable=True),
         sa.Column("win_rate", sa.Numeric(precision=5, scale=2), nullable=True),
         sa.Column("total_trades", sa.Integer(), nullable=False),
-        sa.Column("parameters", postgresql.JSON(astext_type=sa.Text()), nullable=False),
+        sa.Column(
+            "parameters",
+            postgresql.JSON(astext_type=sa.Text()),
+            nullable=False,
+        ),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -101,7 +109,11 @@ def upgrade() -> None:
         sa.Column("size", sa.Integer(), nullable=False),
         sa.Column("pnl", sa.Numeric(precision=12, scale=2), nullable=False),
         sa.Column("reason", sa.Text(), nullable=True),
-        sa.Column("trade_metadata", postgresql.JSON(astext_type=sa.Text()), nullable=True),
+        sa.Column(
+            "trade_metadata",
+            postgresql.JSON(astext_type=sa.Text()),
+            nullable=True,
+        ),
         sa.ForeignKeyConstraint(["backtest_id"], ["backtest_results.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
