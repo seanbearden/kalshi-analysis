@@ -1,0 +1,18 @@
+# Core Framework
+fastapi[all]==0.109.0
+pydantic>=2.6.0
+pydantic-settings>=2.1.0
+uvicorn[standard]==0.27.0
+
+# Database
+sqlalchemy[asyncio]>=2.0.25
+alembic>=1.13.1
+asyncpg>=0.29.0
+
+# Kalshi API Integration
+httpx>=0.26.0
+tenacity>=8.2.3
+
+# Production
+slowapi>=0.1.9
+python-multipart>=0.0.6

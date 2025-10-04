@@ -1,0 +1,79 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: kalshi-postgres
+    environment:
+      POSTGRES_USER: kalshi
+      POSTGRES_PASSWORD: kalshi
+      POSTGRES_DB: kalshi
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kalshi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API (can scale horizontally)
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kalshi-api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - DB_URL=postgresql+asyncpg://kalshi:kalshi@postgres:5432/kalshi
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  # Market Poller (singleton - always 1 instance)
+  # Note: Disabled by default - enable with: docker compose --profile poller up
+  poller:
+    profiles:
+      - poller
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kalshi-poller
+    command: python -m infrastructure.polling.poller
+    env_file:
+      - ./backend/.env
+    environment:
+      - DB_URL=postgresql+asyncpg://kalshi:kalshi@postgres:5432/kalshi
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  # Frontend (Vite dev server)
+  frontend:
+    image: node:22-alpine
+    container_name: kalshi-frontend
+    working_dir: /app
+    command: sh -c "npm install -g pnpm && pnpm install && pnpm dev --host"
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
