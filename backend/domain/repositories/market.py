@@ -38,6 +38,45 @@ class MarketRepository(BaseRepository[MarketSnapshot]):
         result = await self.session.execute(stmt)
         return list(result.scalars().all())
 
+    async def get_all_latest(
+        self, skip: int = 0, limit: int = 100
+    ) -> list[MarketSnapshot]:
+        """Get latest snapshot for each unique ticker.
+
+        Args:
+            skip: Number of records to skip
+            limit: Maximum records to return
+
+        Returns:
+            List of latest snapshots for each ticker
+        """
+        # Subquery to get latest timestamp for each ticker
+        from sqlalchemy import func
+
+        latest_timestamps = (
+            select(
+                MarketSnapshot.ticker,
+                func.max(MarketSnapshot.timestamp).label("max_timestamp"),
+            )
+            .group_by(MarketSnapshot.ticker)
+            .subquery()
+        )
+
+        # Get the actual snapshots
+        stmt = (
+            select(MarketSnapshot)
+            .join(
+                latest_timestamps,
+                (MarketSnapshot.ticker == latest_timestamps.c.ticker)
+                & (MarketSnapshot.timestamp == latest_timestamps.c.max_timestamp),
+            )
+            .order_by(desc(MarketSnapshot.timestamp))
+            .offset(skip)
+            .limit(limit)
+        )
+        result = await self.session.execute(stmt)
+        return list(result.scalars().all())
+
     async def get_latest_by_ticker(self, ticker: str) -> MarketSnapshot | None:
         """Get most recent snapshot for a ticker.
 

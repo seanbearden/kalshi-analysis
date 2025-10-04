@@ -14,6 +14,37 @@ from schemas import (
 router = APIRouter(prefix="/markets", tags=["markets"])
 
 
+@router.get("", response_model=MarketSnapshotListResponse)
+async def get_all_markets(
+    session: SessionDep,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=1000),
+) -> MarketSnapshotListResponse:
+    """Get latest snapshot for all markets.
+
+    Returns the most recent snapshot for each unique ticker.
+
+    Args:
+        session: Database session
+        skip: Number of results to skip
+        limit: Maximum results to return
+
+    Returns:
+        List of latest market snapshots
+    """
+    repo = MarketRepository(session)
+    snapshots = await repo.get_all_latest(skip=skip, limit=limit)
+
+    return MarketSnapshotListResponse(
+        snapshots=[
+            MarketSnapshotResponse.model_validate(s) for s in snapshots
+        ],
+        total=len(snapshots),
+        skip=skip,
+        limit=limit,
+    )
+
+
 @router.get("/{ticker}/snapshots", response_model=MarketSnapshotListResponse)
 async def get_snapshots(
     ticker: str,
