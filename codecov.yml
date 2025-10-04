@@ -84,6 +84,10 @@ comment:
   require_base: false
   require_head: true
 
+# Bundle analysis configuration
+bundle_analysis:
+  range: 5%  # Show warning if bundle size changes by more than 5%
+
 # Ignore patterns
 ignore:
   - "**/*.test.ts"
