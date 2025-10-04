@@ -189,6 +189,7 @@ class TestBacktestRepository:
 
         # Verify execution exists
         result = await backtest_repository.get_with_executions(backtest.id)
+        assert result is not None
         assert len(result.executions) == 1
 
         # Delete backtest

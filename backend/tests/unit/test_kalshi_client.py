@@ -1,5 +1,6 @@
 """Unit tests for Kalshi API client."""
 
+from collections.abc import AsyncGenerator
 from unittest.mock import AsyncMock, patch
 
 import httpx
@@ -13,7 +14,7 @@ class TestKalshiClient:
     """Test suite for KalshiClient."""
 
     @pytest.fixture
-    async def kalshi_client(self) -> KalshiClient:
+    async def kalshi_client(self) -> AsyncGenerator[KalshiClient, None]:
         """Create Kalshi client instance."""
         client = KalshiClient()
         yield client
