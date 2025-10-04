@@ -16,8 +16,8 @@ export function MarketCard({ market, index }: MarketCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="group relative rounded-lg border bg-card p-6 shadow-sm hover:shadow-md transition-shadow"
+      whileHover={{ y: -8, transition: { duration: 0.2 } }}
+      className="group relative rounded-xl border bg-card p-6 shadow-lg hover:shadow-2xl transition-all overflow-hidden"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
@@ -73,8 +73,11 @@ export function MarketCard({ market, index }: MarketCardProps) {
         </div>
       )}
 
-      {/* Hover effect overlay */}
-      <div className="absolute inset-0 rounded-lg bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+      {/* Gradient shine effect on hover */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+      {/* Border glow effect */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-20 blur-xl transition-opacity pointer-events-none -z-10" />
     </motion.div>
   )
 }

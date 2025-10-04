@@ -25,7 +25,7 @@ export function Skeleton({ className = '', variant = 'rectangular' }: SkeletonPr
 
 export function MarketCardSkeleton() {
   return (
-    <div className="rounded-lg border bg-card p-6 space-y-4">
+    <div className="rounded-xl border bg-card p-6 space-y-4 shadow-lg">
       <div className="flex items-start justify-between">
         <div className="space-y-2 flex-1">
           <Skeleton className="h-5 w-24" />
@@ -50,7 +50,7 @@ export function MarketCardSkeleton() {
 
 export function BacktestCardSkeleton() {
   return (
-    <div className="rounded-lg border bg-card p-6">
+    <div className="rounded-xl border bg-card p-6 shadow-lg">
       <div className="flex items-start justify-between mb-4">
         <div className="space-y-2">
           <Skeleton className="h-6 w-40" />

@@ -10,9 +10,13 @@ export default function MarketsPage() {
   if (isLoading) {
     return (
       <div>
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold">Markets</h1>
-          <p className="mt-2 text-muted-foreground">Browse active prediction markets from Kalshi</p>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            Markets
+          </h1>
+          <p className="mt-3 text-lg text-muted-foreground">
+            Browse active prediction markets from Kalshi
+          </p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
@@ -53,9 +57,13 @@ export default function MarketsPage() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Markets</h1>
-        <p className="mt-2 text-muted-foreground">Browse active prediction markets from Kalshi</p>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+          Markets
+        </h1>
+        <p className="mt-3 text-lg text-muted-foreground">
+          Browse active prediction markets from Kalshi
+        </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

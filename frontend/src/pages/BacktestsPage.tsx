@@ -10,9 +10,11 @@ export default function BacktestsPage() {
   if (isLoading) {
     return (
       <div>
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold">Backtests</h1>
-          <p className="mt-2 text-muted-foreground">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            Backtests
+          </h1>
+          <p className="mt-3 text-lg text-muted-foreground">
             Strategy backtesting results and performance metrics
           </p>
         </div>
@@ -68,9 +70,11 @@ export default function BacktestsPage() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Backtests</h1>
-        <p className="mt-2 text-muted-foreground">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+          Backtests
+        </h1>
+        <p className="mt-3 text-lg text-muted-foreground">
           Strategy backtesting results and performance metrics
         </p>
       </div>
@@ -82,8 +86,8 @@ export default function BacktestsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, duration: 0.3 }}
-            whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
-            className="rounded-lg border bg-card p-6 shadow-sm hover:shadow-md transition-shadow"
+            whileHover={{ scale: 1.02, y: -4, transition: { duration: 0.2 } }}
+            className="rounded-xl border bg-card p-6 shadow-lg hover:shadow-2xl transition-all"
           >
             <div className="flex items-start justify-between">
               <div>
