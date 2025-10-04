@@ -12,6 +12,7 @@ asyncpg>=0.29.0
 # Kalshi API Integration
 httpx>=0.26.0
 tenacity>=8.2.3
+websockets>=12.0
 
 # Production
 slowapi>=0.1.9

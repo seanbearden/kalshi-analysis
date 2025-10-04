@@ -36,6 +36,7 @@ class Settings(BaseSettings):
 
     # Kalshi API
     kalshi_api_base: str = "https://demo-api.kalshi.co/trade-api/v2"
+    kalshi_ws_url: str = "wss://demo-api.kalshi.co/trade-api/ws/v2"
     kalshi_poll_interval_seconds: int = 5
     kalshi_request_timeout_seconds: int = 10
     kalshi_max_retries: int = 3

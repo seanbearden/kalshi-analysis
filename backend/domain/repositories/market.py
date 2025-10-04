@@ -181,3 +181,76 @@ class MarketRepository(BaseRepository[MarketSnapshot]):
             raw_data=raw_data,
             sequence=sequence,
         )
+
+    async def detect_gaps(self, ticker: str) -> list[int]:
+        """Detect missing WebSocket sequence numbers for a ticker.
+
+        Phase 2 feature: Gap detection enables data integrity monitoring
+        and backfill triggering.
+
+        Args:
+            ticker: Market ticker to check for gaps
+
+        Returns:
+            List of missing sequence numbers (empty if no gaps)
+
+        Example:
+            If sequences are [1, 2, 4, 5, 7], returns [3, 6]
+        """
+        # Get all WebSocket sequences for this ticker, ordered
+        stmt = (
+            select(MarketSnapshot.sequence)
+            .where(
+                MarketSnapshot.ticker == ticker,
+                MarketSnapshot.source == DataSource.WEBSOCKET,
+                MarketSnapshot.sequence.isnot(None),
+            )
+            .order_by(MarketSnapshot.sequence)
+        )
+        result = await self.session.execute(stmt)
+        sequences = [row[0] for row in result.all()]
+
+        # No sequences or only one sequence means no gaps
+        if len(sequences) < 2:
+            return []
+
+        # Find gaps in sequence numbers
+        gaps = []
+        min_seq = sequences[0]
+        max_seq = sequences[-1]
+
+        # Check for missing numbers in the range
+        sequence_set = set(sequences)
+        for seq in range(min_seq, max_seq + 1):
+            if seq not in sequence_set:
+                gaps.append(seq)
+
+        return gaps
+
+    async def get_websocket_snapshots_by_sequence(
+        self, ticker: str, min_seq: int, max_seq: int
+    ) -> list[MarketSnapshot]:
+        """Get WebSocket snapshots within a sequence range.
+
+        Used for gap analysis and debugging.
+
+        Args:
+            ticker: Market ticker
+            min_seq: Minimum sequence number (inclusive)
+            max_seq: Maximum sequence number (inclusive)
+
+        Returns:
+            WebSocket snapshots within sequence range
+        """
+        stmt = (
+            select(MarketSnapshot)
+            .where(
+                MarketSnapshot.ticker == ticker,
+                MarketSnapshot.source == DataSource.WEBSOCKET,
+                MarketSnapshot.sequence >= min_seq,
+                MarketSnapshot.sequence <= max_seq,
+            )
+            .order_by(MarketSnapshot.sequence)
+        )
+        result = await self.session.execute(stmt)
+        return list(result.scalars().all())
