@@ -13,7 +13,7 @@ from domain.models import BacktestExecution, BacktestResult, StrategyType
 from domain.repositories.base import BaseRepository
 
 
-class BacktestRepository(BaseRepository[BacktestResult]):  # type: ignore[misc]
+class BacktestRepository(BaseRepository[BacktestResult]):
     """Repository for backtest operations."""
 
     def __init__(self, session: AsyncSession) -> None:

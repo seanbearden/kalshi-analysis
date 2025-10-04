@@ -65,7 +65,7 @@ class BaseRepository(Generic[ModelType]):
         self.session.add(instance)
         await self.session.flush()
         await self.session.refresh(instance)
-        return instance  # type: ignore[no-any-return]
+        return instance
 
     async def delete(self, id: UUID) -> bool:
         """Delete record by ID.

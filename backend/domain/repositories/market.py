@@ -10,7 +10,7 @@ from domain.models import DataSource, MarketSnapshot
 from domain.repositories.base import BaseRepository
 
 
-class MarketRepository(BaseRepository[MarketSnapshot]):  # type: ignore[misc]
+class MarketRepository(BaseRepository[MarketSnapshot]):
     """Repository for market snapshot operations."""
 
     def __init__(self, session: AsyncSession) -> None:
