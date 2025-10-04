@@ -43,7 +43,7 @@ jobs:
       - name: Type check with mypy
         run: |
           cd backend
-          mypy .
+          PYTHONPATH=. mypy .
 
       - name: Run tests with pytest
         run: |
