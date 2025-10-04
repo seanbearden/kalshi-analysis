@@ -48,7 +48,7 @@ jobs:
       - name: Run tests with pytest
         run: |
           cd backend
-          pytest tests/ -v --cov=. --cov-report=xml
+          pytest tests/ -v --cov=. --cov-report=xml || test $? -eq 5 && echo "No tests yet - skipping"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
