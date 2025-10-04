@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default tseslint.config(
   {
-    ignores: ['dist', '.eslintrc.cjs'],
+    ignores: ['dist', '.eslintrc.cjs', 'coverage'],
   },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
