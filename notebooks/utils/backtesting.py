@@ -1,10 +1,9 @@
 """Backtesting framework for trading strategies."""
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal, Optional
 import pandas as pd
-import numpy as np
 
 
 @dataclass

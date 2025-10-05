@@ -207,7 +207,6 @@ def plot_reliability_diagram(
             p_hat = actual
             n = count
             denominator = 1 + z**2 / n
-            center = (p_hat + z**2 / (2 * n)) / denominator
             margin = z * np.sqrt(p_hat * (1 - p_hat) / n + z**2 / (4 * n**2)) / denominator
 
             ax.errorbar(pred, actual, yerr=margin, fmt='none', ecolor='gray', alpha=0.5, capsize=5)
