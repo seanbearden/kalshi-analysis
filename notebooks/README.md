@@ -224,6 +224,48 @@ fig = plot_reliability_diagram(
 )
 ```
 
+## Testing
+
+### Automated Testing
+The notebooks and utils framework have comprehensive test coverage:
+
+**Run all tests**:
+```bash
+cd notebooks
+pytest tests/ -v
+```
+
+**Run specific test categories**:
+```bash
+# Utils module tests (fast, no database required)
+pytest tests/test_utils.py -v
+
+# Notebook validation tests (syntax, structure)
+pytest tests/test_notebooks.py::test_notebook_syntax -v
+pytest tests/test_notebooks.py::test_notebooks_have_markdown_cells -v
+```
+
+**Check test coverage**:
+```bash
+pytest tests/test_utils.py --cov=utils --cov-report=html
+# Open htmlcov/index.html to view coverage report
+```
+
+### CI/CD Integration
+- ✅ Automated testing in GitHub Actions
+- ✅ Codecov coverage reporting for notebooks component
+- ✅ 80% coverage requirement for new code
+- ✅ Syntax validation for all notebooks
+
+### Test Structure
+```
+tests/
+├── __init__.py
+├── conftest.py              # Pytest fixtures and configuration
+├── test_utils.py            # Unit tests for utils modules
+└── test_notebooks.py        # Notebook validation tests
+```
+
 ## Next Steps
 
 **After Phase 1C completion**:

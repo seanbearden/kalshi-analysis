@@ -138,6 +138,60 @@ jobs:
           cd frontend
           pnpm build
 
+  notebooks:
+    name: Notebooks (Jupyter)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          cd notebooks
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          # Install testing dependencies
+          pip install pytest pytest-cov nbconvert nbformat ipykernel
+
+      - name: Run utils tests with pytest
+        run: |
+          cd notebooks
+          pytest tests/test_utils.py -v --cov=utils --cov-report=xml --junitxml=junit.xml
+
+      - name: Run notebook validation tests
+        run: |
+          cd notebooks
+          # Run syntax validation (doesn't require database)
+          pytest tests/test_notebooks.py::test_notebook_syntax -v
+          pytest tests/test_notebooks.py::test_notebooks_have_markdown_cells -v
+          pytest tests/test_notebooks.py::test_notebooks_import_utils -v
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        if: always() && hashFiles('notebooks/coverage.xml') != ''
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./notebooks/coverage.xml
+          flags: notebooks
+          name: notebooks-${{ matrix.python-version }}
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./notebooks/junit.xml
+          flags: notebooks
+
   docker:
     name: Docker Build
     runs-on: ubuntu-latest
