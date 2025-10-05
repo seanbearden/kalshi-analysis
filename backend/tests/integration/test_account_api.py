@@ -7,7 +7,9 @@ import jwt
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.config import Settings
 from domain.models.account import PositionCache, UserCredential
 
 
@@ -15,7 +17,9 @@ class TestAccountAPI:
     """Integration tests for account authentication and portfolio endpoints."""
 
     @pytest.mark.asyncio
-    async def test_authenticate_success(self, client: AsyncClient, session, mock_settings):
+    async def test_authenticate_success(
+        self, client: AsyncClient, session: AsyncSession, mock_settings: Settings
+    ) -> None:
         """Test successful authentication with valid API key."""
         # Mock Kalshi API balance endpoint to verify credentials
         mock_balance_response = {"cash_balance": 100000, "total_value": 150000}
@@ -63,7 +67,7 @@ class TestAccountAPI:
             assert len(credential.encrypted_api_key) > 0
 
     @pytest.mark.asyncio
-    async def test_authenticate_invalid_api_key(self, client: AsyncClient):
+    async def test_authenticate_invalid_api_key(self, client: AsyncClient) -> None:
         """Test authentication fails with invalid API key."""
         # Mock Kalshi API to return authentication error
         with patch("api.v1.account.AuthenticatedKalshiClient") as MockAuthClient:
@@ -83,7 +87,7 @@ class TestAccountAPI:
             assert "Invalid Kalshi API key" in response.json()["detail"]
 
     @pytest.mark.asyncio
-    async def test_authenticate_empty_api_key(self, client: AsyncClient):
+    async def test_authenticate_empty_api_key(self, client: AsyncClient) -> None:
         """Test authentication fails with empty API key."""
         response = await client.post("/api/v1/account/authenticate", json={"api_key": ""})
 
@@ -91,7 +95,7 @@ class TestAccountAPI:
         assert "api_key" in response.text.lower()
 
     @pytest.mark.asyncio
-    async def test_get_portfolio_success(self, client: AsyncClient, session):
+    async def test_get_portfolio_success(self, client: AsyncClient, session: AsyncSession) -> None:
         """Test successful portfolio retrieval with valid authentication."""
         # First authenticate to get JWT token
         mock_balance_response = {"cash_balance": 100000, "total_value": 150000}
@@ -199,7 +203,9 @@ class TestAccountAPI:
             assert "NFL-CHIEFS" in cached_tickers
 
     @pytest.mark.asyncio
-    async def test_get_portfolio_no_credentials(self, client: AsyncClient, mock_settings):
+    async def test_get_portfolio_no_credentials(
+        self, client: AsyncClient, mock_settings: Settings
+    ) -> None:
         """Test portfolio retrieval fails without authentication."""
         # Create a fake token (not from actual authentication)
         fake_token = jwt.encode(
@@ -216,14 +222,14 @@ class TestAccountAPI:
         assert "No credentials found" in response.json()["detail"]
 
     @pytest.mark.asyncio
-    async def test_get_portfolio_missing_token(self, client: AsyncClient):
+    async def test_get_portfolio_missing_token(self, client: AsyncClient) -> None:
         """Test portfolio retrieval fails without JWT token."""
         response = await client.get("/api/v1/account/portfolio")
 
         assert response.status_code == 403  # Forbidden - no credentials provided
 
     @pytest.mark.asyncio
-    async def test_get_portfolio_invalid_token(self, client: AsyncClient):
+    async def test_get_portfolio_invalid_token(self, client: AsyncClient) -> None:
         """Test portfolio retrieval fails with invalid JWT token."""
         response = await client.get(
             "/api/v1/account/portfolio", headers={"Authorization": "Bearer invalid_token"}
@@ -233,7 +239,9 @@ class TestAccountAPI:
         assert "Invalid token" in response.json()["detail"]
 
     @pytest.mark.asyncio
-    async def test_get_portfolio_expired_token(self, client: AsyncClient, mock_settings):
+    async def test_get_portfolio_expired_token(
+        self, client: AsyncClient, mock_settings: Settings
+    ) -> None:
         """Test portfolio retrieval fails with expired JWT token."""
         # Create an expired token
         expired_token = jwt.encode(
@@ -250,7 +258,7 @@ class TestAccountAPI:
         assert "Token expired" in response.json()["detail"]
 
     @pytest.mark.asyncio
-    async def test_get_positions_success(self, client: AsyncClient):
+    async def test_get_positions_success(self, client: AsyncClient) -> None:
         """Test successful positions retrieval."""
         mock_balance_response = {"cash_balance": 100000, "total_value": 150000}
         mock_portfolio_response = {"balance": mock_balance_response, "positions": []}
@@ -308,7 +316,7 @@ class TestAccountAPI:
             assert int(pnl) if isinstance(pnl, str) else pnl == 50  # (55 - 50) * 10
 
     @pytest.mark.asyncio
-    async def test_logout_success(self, client: AsyncClient, session):
+    async def test_logout_success(self, client: AsyncClient, session: AsyncSession) -> None:
         """Test successful logout and credential cleanup."""
         mock_balance_response = {"cash_balance": 100000, "total_value": 150000}
 
@@ -355,14 +363,14 @@ class TestAccountAPI:
             assert len(positions) == 0
 
     @pytest.mark.asyncio
-    async def test_logout_missing_token(self, client: AsyncClient):
+    async def test_logout_missing_token(self, client: AsyncClient) -> None:
         """Test logout fails without JWT token."""
         response = await client.delete("/api/v1/account/logout")
 
         assert response.status_code == 403  # Forbidden - no credentials provided
 
     @pytest.mark.asyncio
-    async def test_jwt_token_lifecycle(self, client: AsyncClient, mock_settings):
+    async def test_jwt_token_lifecycle(self, client: AsyncClient, mock_settings: Settings) -> None:
         """Test JWT token generation, validation, and expiration."""
         mock_balance_response = {"cash_balance": 100000, "total_value": 150000}
 
@@ -393,7 +401,7 @@ class TestAccountAPI:
             assert time_diff < 5  # Within 5 seconds
 
     @pytest.mark.asyncio
-    async def test_pnl_calculation_yes_position(self, client: AsyncClient):
+    async def test_pnl_calculation_yes_position(self, client: AsyncClient) -> None:
         """Test P&L calculation for YES position."""
         mock_balance_response = {"cash_balance": 100000, "total_value": 150000}
         mock_portfolio_response = {"balance": mock_balance_response, "positions": []}
@@ -448,7 +456,7 @@ class TestAccountAPI:
             assert pnl_pct == pytest.approx(20.0, rel=0.01)  # 10/50 * 100 = 20%
 
     @pytest.mark.asyncio
-    async def test_pnl_calculation_no_position(self, client: AsyncClient):
+    async def test_pnl_calculation_no_position(self, client: AsyncClient) -> None:
         """Test P&L calculation for NO position."""
         mock_balance_response = {"cash_balance": 100000, "total_value": 150000}
         mock_portfolio_response = {"balance": mock_balance_response, "positions": []}
