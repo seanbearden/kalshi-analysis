@@ -5,7 +5,6 @@ Uses pytest and nbconvert to validate notebook cells.
 """
 
 import pytest
-from pathlib import Path
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor, CellExecutionError
 
