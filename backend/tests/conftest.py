@@ -213,10 +213,12 @@ def test_jwt_secret() -> str:
 
 
 @pytest.fixture(autouse=True)
-def mock_settings(test_encryption_key: str, test_jwt_secret: str, monkeypatch):
+def mock_settings(
+    test_encryption_key: str, test_jwt_secret: str, monkeypatch: pytest.MonkeyPatch
+) -> Settings:
     """Mock settings with test encryption and JWT keys for all tests."""
 
-    def mock_get_settings():
+    def mock_get_settings() -> Settings:
         return Settings(
             db_url="postgresql+asyncpg://test:test@localhost/test",  # pragma: allowlist secret
             encryption_secret_key=test_encryption_key,

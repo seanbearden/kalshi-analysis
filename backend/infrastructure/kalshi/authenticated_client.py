@@ -1,7 +1,7 @@
 """Authenticated Kalshi API client for user account operations."""
 
 import logging
-from typing import Any
+from typing import Any, Self, cast
 
 from core.exceptions import AuthenticationError, KalshiAPIError
 from infrastructure.kalshi.client import KalshiClient
@@ -34,6 +34,15 @@ class AuthenticatedKalshiClient(KalshiClient):
         self.client.headers.update({"Authorization": f"Bearer {api_key.strip()}"})
         self.api_key = api_key.strip()
 
+    async def __aenter__(self) -> Self:
+        """Enter async context manager.
+
+        Returns:
+            Self for proper type inference
+        """
+        await super().__aenter__()
+        return self
+
     async def get_portfolio(self) -> dict[str, Any]:
         """Get complete portfolio snapshot.
 
@@ -64,7 +73,7 @@ class AuthenticatedKalshiClient(KalshiClient):
         try:
             response = await self._request("GET", "/portfolio/positions")
             # Kalshi API returns positions in a 'positions' key
-            return response.get("positions", [])
+            return cast(list[dict[str, Any]], response.get("positions", []))
         except KalshiAPIError as e:
             if e.status_code == 401:
                 raise AuthenticationError("Invalid API key") from e

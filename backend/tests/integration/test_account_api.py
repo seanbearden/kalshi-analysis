@@ -349,9 +349,9 @@ class TestAccountAPI:
             assert credential is None
 
             # Verify positions were cleared
-            stmt = select(PositionCache).where(PositionCache.user_id == "default")
-            result = await session.execute(stmt)
-            positions = result.scalars().all()
+            position_stmt = select(PositionCache).where(PositionCache.user_id == "default")
+            position_result = await session.execute(position_stmt)
+            positions = position_result.scalars().all()
             assert len(positions) == 0
 
     @pytest.mark.asyncio
