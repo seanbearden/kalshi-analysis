@@ -30,6 +30,20 @@ router = APIRouter(prefix="/account", tags=["account"])
 security = HTTPBearer()
 
 
+def sanitize_for_log(s: str) -> str:
+    """Remove line break characters to prevent log injection.
+
+    Args:
+        s: String to sanitize
+
+    Returns:
+        Sanitized string with newlines and carriage returns removed
+    """
+    if not isinstance(s, str):
+        return str(s)
+    return s.replace("\n", "").replace("\r", "")
+
+
 def create_jwt_token(user_id: str) -> tuple[str, datetime]:
     """Create JWT session token.
 
@@ -146,7 +160,7 @@ async def authenticate(
         # Create JWT session token
         token, expires_at = create_jwt_token(user_id)
 
-        logger.info(f"User {user_id} authenticated successfully")
+        logger.info(f"User {sanitize_for_log(user_id)} authenticated successfully")
 
         return AuthenticateResponse(
             status="authenticated",
@@ -164,13 +178,15 @@ async def authenticate(
             detail=str(e),
         ) from e
     except ConfigurationError as e:
-        logger.error(f"Configuration error during authentication: {e}")
+        logger.error(f"Configuration error during authentication: {sanitize_for_log(str(e))}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Server configuration error",
         ) from e
     except Exception as e:
-        logger.error(f"Unexpected error during authentication: {e}", exc_info=True)
+        logger.error(
+            f"Unexpected error during authentication: {sanitize_for_log(str(e))}", exc_info=True
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Authentication failed",
@@ -270,7 +286,7 @@ async def get_portfolio(
             detail=str(e),
         ) from e
     except Exception as e:
-        logger.error(f"Error fetching portfolio: {e}", exc_info=True)
+        logger.error(f"Error fetching portfolio: {sanitize_for_log(str(e))}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to fetch portfolio",
@@ -351,7 +367,7 @@ async def get_positions(
             detail=str(e),
         ) from e
     except Exception as e:
-        logger.error(f"Error fetching positions: {e}", exc_info=True)
+        logger.error(f"Error fetching positions: {sanitize_for_log(str(e))}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to fetch positions",
@@ -383,7 +399,7 @@ async def logout(
         position_tracker = PositionTracker(session, user_id)
         await position_tracker.clear_all_positions()
 
-        logger.info(f"User {user_id} logged out successfully")
+        logger.info(f"User {sanitize_for_log(user_id)} logged out successfully")
 
         return LogoutResponse(
             status="logged_out",
@@ -391,7 +407,7 @@ async def logout(
         )
 
     except Exception as e:
-        logger.error(f"Error during logout: {e}", exc_info=True)
+        logger.error(f"Error during logout: {sanitize_for_log(str(e))}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Logout failed",
