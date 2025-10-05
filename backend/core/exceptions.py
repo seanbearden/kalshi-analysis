@@ -36,3 +36,17 @@ class NotFoundError(KalshiAnalysisException):
 
     def __init__(self, message: str, status_code: int = 404) -> None:
         super().__init__(message, status_code)
+
+
+class ConfigurationError(KalshiAnalysisException):
+    """Exception raised when application configuration is invalid or missing."""
+
+    def __init__(self, message: str, status_code: int = 500) -> None:
+        super().__init__(message, status_code)
+
+
+class AuthenticationError(KalshiAnalysisException):
+    """Exception raised when authentication fails."""
+
+    def __init__(self, message: str, status_code: int = 401) -> None:
+        super().__init__(message, status_code)
