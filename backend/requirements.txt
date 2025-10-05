@@ -14,6 +14,10 @@ httpx>=0.26.0
 tenacity>=8.2.3
 websockets>=12.0
 
+# Account Integration & Security
+cryptography>=42.0.0  # Fernet encryption
+PyJWT>=2.8.0  # JWT session tokens
+
 # Production
 slowapi>=0.1.9
 python-multipart>=0.0.6

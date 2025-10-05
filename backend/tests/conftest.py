@@ -7,6 +7,7 @@ from decimal import Decimal
 from typing import Any
 
 import pytest
+from cryptography.fernet import Fernet
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -15,6 +16,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from core.config import Settings
 from domain.models import BacktestResult, MarketSnapshot
 from domain.models.backtest import StrategyType
 from domain.models.market import DataSource
@@ -194,3 +196,36 @@ def mock_kalshi_markets_list() -> list[dict[str, Any]]:
             "status": "active",
         },
     ]
+
+
+@pytest.fixture(scope="session")
+def test_encryption_key() -> str:
+    """Generate a test Fernet encryption key (session-scoped for consistency)."""
+    return Fernet.generate_key().decode()
+
+
+@pytest.fixture(scope="session")
+def test_jwt_secret() -> str:
+    """Generate a test JWT secret key (session-scoped for consistency)."""
+    import secrets
+
+    return secrets.token_urlsafe(32)
+
+
+@pytest.fixture(autouse=True)
+def mock_settings(test_encryption_key: str, test_jwt_secret: str, monkeypatch):
+    """Mock settings with test encryption and JWT keys for all tests."""
+
+    def mock_get_settings():
+        return Settings(
+            db_url="postgresql+asyncpg://test:test@localhost/test",  # pragma: allowlist secret
+            encryption_secret_key=test_encryption_key,
+            jwt_secret_key=test_jwt_secret,
+            jwt_algorithm="HS256",
+            jwt_expiration_hours=24,
+        )
+
+    monkeypatch.setattr("core.config.get_settings", mock_get_settings)
+    monkeypatch.setattr("services.account.credential_manager.get_settings", mock_get_settings)
+    monkeypatch.setattr("api.v1.account.get_settings", mock_get_settings)
+    return mock_get_settings()

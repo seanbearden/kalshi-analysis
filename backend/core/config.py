@@ -45,6 +45,14 @@ class Settings(BaseSettings):
     kalshi_api_key_id: str | None = None
     kalshi_private_key_path: str | None = None
 
+    # Account Integration (Phase 1 - User Credential Encryption)
+    encryption_secret_key: str | None = None  # Fernet encryption key for API keys
+
+    # JWT Session Management
+    jwt_secret_key: str | None = None  # JWT signing key
+    jwt_algorithm: str = "HS256"
+    jwt_expiration_hours: int = 24
+
     # Rate Limiting
     rate_limit_per_minute: int = 60
 
