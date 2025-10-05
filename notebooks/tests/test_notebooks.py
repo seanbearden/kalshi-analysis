@@ -86,12 +86,29 @@ def test_notebook_syntax(notebook_name, notebooks_dir):
 
             # Check for syntax errors (basic validation)
             if source.strip():
-                try:
-                    compile(source, f'<cell {i}>', 'exec')
-                except SyntaxError as e:
-                    pytest.fail(
-                        f"Syntax error in {notebook_name} cell {i}:\n{e}"
-                    )
+                # Filter out IPython magic commands which aren't valid Python
+                filtered_lines = []
+                for line in source.split('\n'):
+                    # Skip IPython line magic (starts with %)
+                    if line.strip().startswith('%'):
+                        continue
+                    # Skip IPython cell magic (starts with %%)
+                    if line.strip().startswith('%%'):
+                        # Cell magic affects entire cell, skip validation
+                        filtered_lines = []
+                        break
+                    filtered_lines.append(line)
+
+                filtered_source = '\n'.join(filtered_lines)
+
+                # Only validate if there's Python code left after filtering
+                if filtered_source.strip():
+                    try:
+                        compile(filtered_source, f'<cell {i}>', 'exec')
+                    except SyntaxError as e:
+                        pytest.fail(
+                            f"Syntax error in {notebook_name} cell {i}:\n{e}"
+                        )
 
 
 def test_notebooks_have_markdown_cells(notebooks_dir):
