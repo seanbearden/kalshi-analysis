@@ -167,6 +167,20 @@ class Backtest:
         Returns:
             BacktestResult with trades and equity curve
         """
+        # Handle empty dataframe
+        if len(df) == 0:
+            return BacktestResult(
+                trades=pd.DataFrame(),
+                equity_curve=pd.Series([self.initial_capital]),
+                initial_capital=self.initial_capital,
+                final_capital=self.initial_capital,
+                total_return_pct=0.0,
+                total_trades=0,
+                winning_trades=0,
+                losing_trades=0,
+                win_rate=0.0
+            )
+
         # Generate signals if not already present
         if 'signal' not in df.columns:
             df = self.strategy.generate_signals(df)

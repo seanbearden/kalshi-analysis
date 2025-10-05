@@ -138,6 +138,12 @@ class PerformanceMetrics:
         Returns:
             Tuple of (max_drawdown_pct, start_idx, end_idx)
         """
+        # Handle empty or single-point equity curve
+        if len(equity_curve) == 0:
+            return 0.0, 0, 0
+        if len(equity_curve) == 1:
+            return 0.0, 0, 0
+
         cumulative_max = equity_curve.expanding().max()
         drawdown = (equity_curve - cumulative_max) / cumulative_max * 100
 
@@ -145,7 +151,15 @@ class PerformanceMetrics:
         end_idx = drawdown.idxmin()
 
         # Find start of drawdown (last peak before max drawdown)
-        start_idx = (equity_curve[:end_idx] == cumulative_max[:end_idx]).iloc[::-1].idxmax()
+        # Handle edge case where end_idx is at the beginning
+        if end_idx == equity_curve.index[0]:
+            start_idx = end_idx
+        else:
+            peaks = equity_curve[:end_idx] == cumulative_max[:end_idx]
+            if peaks.any():
+                start_idx = peaks.iloc[::-1].idxmax()
+            else:
+                start_idx = equity_curve.index[0]
 
         return max_dd, start_idx, end_idx
 
