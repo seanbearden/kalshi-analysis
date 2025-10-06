@@ -31,7 +31,7 @@
     "react-router-dom": "^7.9.3",
     "recharts": "^2.15.4",
     "tailwind-merge": "^2.6.0",
-    "zod": "^3.25.76"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@codecov/vite-plugin": "^1.9.1",
